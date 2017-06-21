@@ -59,6 +59,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "198921384034-c36nmor39ma1fqcdiu9le0d76p934tec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mybooks.mybooks_admin",
+            "certificate_hash": "3e8386096b6a6dcf02a24fb8873a59147d47aa02"
+          }
+        },
+        {
           "client_id": "198921384034-kqvu3kliqj7r9iebqua65h05v80e0dcp.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -73,8 +81,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "198921384034-kqvu3kliqj7r9iebqua65h05v80e0dcp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
