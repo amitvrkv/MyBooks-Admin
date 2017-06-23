@@ -88,6 +88,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/addBookSem"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,6 +102,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/addBookMrp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -114,6 +116,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/addBookNewPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -127,6 +130,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/addBookOldPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -140,6 +144,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:inputType="number"
                     android:id="@+id/addBookAvlCopy"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -155,10 +160,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@color/colorLightPrimary"
-            android:gravity="center"
             android:text="Add Book Details"
-            android:textSize="@dimen/toolbarTextSize" />
+           />
 
     </RelativeLayout>
 
