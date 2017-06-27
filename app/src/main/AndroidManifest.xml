@@ -22,7 +22,8 @@
             android:name=".HomeActivity"
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme" />
-        <activity android:name=".BooksAddActivity"></activity>
+        <activity android:name=".BooksAddActivity" />
+        <activity android:name=".BooksUpdateActivity"></activity>
     </application>
 
 </manifest>
