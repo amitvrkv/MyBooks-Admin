@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.mybooks.mybooks_admin.OrderActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbarHeight"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:padding="@dimen/backButtonPadding"
+            android:src="@drawable/ic_arrow_back_white_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="@color/colorTextIcon"
+            android:gravity="center"
+            android:textSize="@dimen/toolbarTextSize"
+            android:text="Manage Orders"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/orderRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_above="@+id/view" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_above="@+id/horizontalScrollView"
+        android:background="@color/colorPrimary"
+        android:id="@+id/view" />
+
+    <HorizontalScrollView
+        android:id="@+id/horizontalScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/toolbarHeight"
+        android:layout_alignParentBottom="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#e0f2f1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/orderFilOrderPlaced"
+                android:layout_width="170dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Order placed"
+                android:textSize="19dp" />
+
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorTextIcon" />
+
+
+            <TextView
+                android:id="@+id/orderFilInProcess"
+                android:layout_width="170dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="In process"
+                android:textSize="19dp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorTextIcon" />
+
+            <TextView
+                android:id="@+id/orderFilOutForDelivery"
+                android:layout_width="170dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Out for delivery"
+                android:textSize="19dp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorTextIcon" />
+
+            <TextView
+                android:id="@+id/orderFilDelivered"
+                android:layout_width="170dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Delivered"
+                android:textSize="19dp" />
+
+            <View
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/colorTextIcon" />
+
+            <TextView
+                android:id="@+id/orderFilCancelledOrder"
+                android:layout_width="170dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Cancelled Order"
+                android:textSize="19dp" />
+        </LinearLayout>
+
+    </HorizontalScrollView>
+
+
+</RelativeLayout>

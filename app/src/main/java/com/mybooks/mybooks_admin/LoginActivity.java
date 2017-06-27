@@ -108,14 +108,15 @@ public class LoginActivity extends AppCompatActivity {
     public void verifyKey(final String key) {
         final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("Admin")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".","*"));
+                .child(FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", "*"));
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String dataBasekey = String.valueOf(dataSnapshot.child("key").getValue());
-                if (key.equals(dataBasekey))
+                if (key.equals(dataBasekey)) {
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                //Toast.makeText(getApplicationContext(), "varified", Toast.LENGTH_SHORT).show();
+                    finish();
+                }
             }
 
             @Override

@@ -185,6 +185,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_LONG).show();
+                    finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
                 }

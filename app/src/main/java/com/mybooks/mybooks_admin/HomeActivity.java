@@ -81,11 +81,14 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.manageBooksMenu) {
-            startActivity(new Intent(this, BooksAddActivity .class));
+        switch (id) {
+            case R.id.manageBooksMenu:
+                startActivity(new Intent(this, BooksAddActivity .class));
+                break;
 
-        } else if (id == R.id.manageOrdersMenu) {
-
+            case R.id.manageOrdersMenu:
+                startActivity(new Intent(this, OrderActivity.class));
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

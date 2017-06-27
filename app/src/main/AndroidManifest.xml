@@ -23,7 +23,8 @@
             android:label="@string/title_activity_home"
             android:theme="@style/AppTheme" />
         <activity android:name=".BooksAddActivity" />
-        <activity android:name=".BooksUpdateActivity"></activity>
+        <activity android:name=".BooksUpdateActivity" />
+        <activity android:name=".OrderActivity"></activity>
     </application>
 
 </manifest>
