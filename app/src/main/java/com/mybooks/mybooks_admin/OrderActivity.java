@@ -1,13 +1,17 @@
 package com.mybooks.mybooks_admin;
 
+import android.content.DialogInterface;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -221,19 +225,55 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
-        public void changeStatus(String status) {
-            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-            databaseReference.child("comment").setValue(comment + "\nMy Books: " + status);
-            databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
+        public void changeStatus(final String status) {
+            if (status.equals("Order cancelled")) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+                final EditText edittext = new EditText(view.getContext());
+                alert.setTitle("Enter reason");
+                alert.setView(edittext);
 
-                    } else {
+                alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String reason = edittext.getText().toString();
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
+                        databaseReference.child("comment").setValue(comment + "\nMy Books: " + status + " (" + reason + ")");
+                        databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(view.getContext(), "Status updated to: " + status, Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(view.getContext(), "Failed to update status", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                alert.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
 
                     }
-                }
-            });
+                });
+
+                alert.show();
+
+            } else {
+
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
+                databaseReference.child("comment").setValue(comment + "\nMy Books: " + status);
+                databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(view.getContext(), "Status updated to: " + status, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(view.getContext(), "Failed to update status", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+            }
         }
     }
 }
