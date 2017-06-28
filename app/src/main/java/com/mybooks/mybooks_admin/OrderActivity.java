@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -200,23 +201,23 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.rvCancelOrder:
-                    changeStatus("Order cancelled");
+                    changeStatus(v.getContext().getString(R.string.order_cancelled));
                     break;
 
                 case R.id.rvOrderPlaced:
-                    changeStatus("Order placed");
+                    changeStatus(v.getContext().getString(R.string.order_placed));
                     break;
 
                 case R.id.rvInProcess:
-                    changeStatus("In process");
+                    changeStatus(v.getContext().getString(R.string.order_inprocess));
                     break;
 
                 case R.id.rvOutForDelivery:
-                    changeStatus("Out for delivery");
+                    changeStatus(v.getContext().getString(R.string.out_for_delivery));
                     break;
 
                 case R.id.rvDelivered:
-                    changeStatus("Delivered");
+                    changeStatus(v.getContext().getString(R.string.delivered));
                     break;
 
                 case R.id.rvDeleteOrder:
@@ -226,7 +227,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         }
 
         public void changeStatus(final String status) {
-            if (status.equals("Order cancelled")) {
+            if (status.equals(view.getContext().getString(R.string.order_cancelled))) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
                 final EditText edittext = new EditText(view.getContext());
                 alert.setTitle("Enter reason");
@@ -235,8 +236,11 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 alert.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String reason = edittext.getText().toString();
+                        if (TextUtils.isEmpty(reason))
+                            return;
+
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                        databaseReference.child("comment").setValue(comment + "\nMy Books: " + status + " (" + reason + ")");
+                        databaseReference.child("comment").setValue(comment + "My Books: " + status + " (" + reason + ")\n");
                         databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
@@ -262,7 +266,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                databaseReference.child("comment").setValue(comment + "\nMy Books: " + status);
+                databaseReference.child("comment").setValue(comment + "My Books: " + status + "\n");
                 databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
