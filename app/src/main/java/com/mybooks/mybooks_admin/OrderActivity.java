@@ -198,7 +198,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
         public void setComment(String comment) {
             TextView mComment = (TextView) view.findViewById(R.id.rvComments);
-            mComment.setText(comment);
+            mComment.setText(comment.replace("ME", "Customer"));
             this.comment = comment;
         }
 
@@ -257,7 +257,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                             return;
 
                         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                        databaseReference.child("comment").setValue(comment + "My Books: " + status + " (" + reason + ")\n")
+                        databaseReference.child("comment").setValue(comment + "My Books: " + reason + "\n")
                                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
