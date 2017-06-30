@@ -6,8 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -88,15 +87,15 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:text="Comment: "
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="Comment: " />
 
                     <TextView
-                        android:paddingLeft="10dp"
                         android:id="@+id/rvComments"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="10dp"
                         android:text="" />
 
                 </LinearLayout>
@@ -109,9 +108,9 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="10dp"
                     android:background="@color/colorPrimary"
                     android:gravity="center"
                     android:paddingLeft="3dp"
@@ -197,16 +196,29 @@
                             android:layout_height="match_parent"
                             android:gravity="center"
                             android:text="Delete Order" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/colorTextIcon" />
+
+                        <TextView
+                            android:id="@+id/rvAddCommentstoOrder"
+                            android:layout_width="120dp"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="Add Comment" />
+
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>
 
             <View
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="5dp"
-                android:background="@color/colorPrimary"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"/>
+                android:layout_height="2dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="3dp"
+                android:background="@color/colorPrimary" />
 
 
         </LinearLayout>

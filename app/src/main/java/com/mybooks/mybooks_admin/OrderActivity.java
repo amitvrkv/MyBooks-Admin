@@ -131,6 +131,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         View view;
         String orderId;
         String comment;
+        String orderBy;
 
         public OrderViewHolder(View itemView) {
             super(itemView);
@@ -153,6 +154,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
             TextView delete = (TextView) itemView.findViewById(R.id.rvDeleteOrder);
             delete.setOnClickListener(this);
+
+            TextView addComment = (TextView) itemView.findViewById(R.id.rvAddCommentstoOrder);
+            addComment.setOnClickListener(this);
         }
 
         public void setOrderId(String id) {
@@ -164,6 +168,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         public void setOrderBy(String orderBy) {
             TextView mOrderBy = (TextView) view.findViewById(R.id.rvOrderBy);
             mOrderBy.setText("Ordered by: " + orderBy);
+            this.orderBy = orderBy;
         }
 
         public void setDate(String date) {
@@ -221,13 +226,59 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                     break;
 
                 case R.id.rvDeleteOrder:
+                    DatabaseReference orderDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
+                    orderDatabaseReference.removeValue();
 
+                    DatabaseReference detailsDatabaseReference = FirebaseDatabase.getInstance().getReference()
+                            .child("OrderDetails")
+                            .child(orderBy.replace(".", "*"))
+                            .child(orderId);
+                    detailsDatabaseReference.removeValue();
+
+                    break;
+
+                case R.id.rvAddCommentstoOrder:
+                    changeStatus("comment");
                     break;
             }
         }
 
         public void changeStatus(final String status) {
-            if (status.equals(view.getContext().getString(R.string.order_cancelled))) {
+
+            if (status.equals("comment")) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
+                final EditText edittext = new EditText(view.getContext());
+                alert.setTitle("Enter comment");
+                alert.setView(edittext);
+                alert.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String reason = edittext.getText().toString();
+                        if (TextUtils.isEmpty(reason))
+                            return;
+
+                        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
+                        databaseReference.child("comment").setValue(comment + "My Books: " + status + " (" + reason + ")\n")
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(view.getContext(), "Comment updated", Toast.LENGTH_LONG).show();
+                                } else {
+                                    Toast.makeText(view.getContext(), "Failed to update comment", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
+                });
+
+                alert.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                });
+                alert.show();
+
+            } else if (status.equals(view.getContext().getString(R.string.order_cancelled))) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
                 final EditText edittext = new EditText(view.getContext());
                 alert.setTitle("Enter reason");
@@ -264,9 +315,8 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
             } else {
 
-
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                databaseReference.child("comment").setValue(comment + "My Books: " + status + "\n");
+                //databaseReference.child("comment").setValue(comment + "My Books: " + status + "\n");
                 databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
