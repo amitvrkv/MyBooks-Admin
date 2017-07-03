@@ -164,6 +164,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     public void addBookDetailsToDatabase(String title, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
         course = course.replace(".", "");
         course = course.replace(",", "");
+        course = course.toUpperCase();
 
 
         progressDialog.setTitle("Please wait...");
@@ -173,11 +174,11 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         databaseReference.child(key).child("title").setValue(title);
         databaseReference.child(key).child("author").setValue(author);
         databaseReference.child(key).child("course").setValue(course);
-        databaseReference.child(key).child("sem ").setValue(sem);
+        databaseReference.child(key).child("sem").setValue(sem);
         databaseReference.child(key).child("priceMRP").setValue(mrp);
         databaseReference.child(key).child("priceNew").setValue(newPrice);
         databaseReference.child(key).child("priceOld").setValue(oldPrice);
-        databaseReference.child(key).child("avlcopy").setValue(avlCopy);
+        databaseReference.child(key).child("avlcopy").setValue(Integer.parseInt(avlCopy));
         databaseReference.child(key).child("key").setValue(key);
         databaseReference.child(key).child("soldcopy").setValue("0");
         databaseReference.child(key).child("src").setValue("na").addOnCompleteListener(new OnCompleteListener<Void>() {

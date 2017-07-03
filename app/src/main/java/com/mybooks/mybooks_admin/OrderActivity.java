@@ -1,5 +1,7 @@
 package com.mybooks.mybooks_admin;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -18,9 +20,12 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 public class OrderActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -30,10 +35,18 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
     FirebaseRecyclerAdapter<OrderModelClass, OrderViewHolder> firebaseRecyclerAdapter;
 
+    ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please wait...");
+        progressDialog.setMessage("Loading data...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
 
         filterInProcess = (TextView) findViewById(R.id.orderFilInProcess);
         filterInProcess.setOnClickListener(this);
@@ -72,6 +85,29 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         };
 
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() <= 0 ) {
+                    Toast.makeText(getApplicationContext(), "No order found", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),  dataSnapshot.getChildrenCount() + " order(s) found", Toast.LENGTH_SHORT).show();
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //progressDialog.show();
     }
 
     @Override
@@ -102,6 +138,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
     }
 
     public void setFilter(String status) {
+
+        progressDialog.show();
+
         Query databaseReference = null;
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").orderByChild("status").equalTo(status);
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<OrderModelClass, OrderViewHolder>(
@@ -123,6 +162,23 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             }
         };
         recyclerView.setAdapter(firebaseRecyclerAdapter);
+
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() <= 0 ) {
+                    Toast.makeText(getApplicationContext(), "No order found", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(),  dataSnapshot.getChildrenCount() + " order(s) found", Toast.LENGTH_SHORT).show();
+                }
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 
