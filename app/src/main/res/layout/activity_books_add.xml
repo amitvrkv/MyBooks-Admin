@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:id="@+id/addBookTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -64,6 +65,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:id="@+id/addBookAuthor"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -76,6 +78,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:id="@+id/addBookCourse"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -89,6 +92,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:inputType="number"
                     android:id="@+id/addBookSem"
                     android:layout_width="match_parent"
@@ -104,6 +108,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:inputType="number"
                     android:id="@+id/addBookMrp"
                     android:layout_width="match_parent"
@@ -118,6 +123,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:inputType="number"
                     android:id="@+id/addBookNewPrice"
                     android:layout_width="match_parent"
@@ -132,6 +138,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:inputType="number"
                     android:id="@+id/addBookOldPrice"
                     android:layout_width="match_parent"
@@ -146,6 +153,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
+                    android:maxLines="1"
                     android:text="10"
                     android:inputType="number"
                     android:id="@+id/addBookAvlCopy"

@@ -164,16 +164,14 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     public void addBookDetailsToDatabase(String title, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
         course = course.replace(".", "");
         course = course.replace(",", "");
-        course = course.toUpperCase();
-
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(course);
         String key = databaseReference.push().getKey();
-        databaseReference.child(key).child("title").setValue(title);
-        databaseReference.child(key).child("author").setValue(author);
-        databaseReference.child(key).child("course").setValue(course);
+        databaseReference.child(key).child("title").setValue(title.toUpperCase());
+        databaseReference.child(key).child("author").setValue(author.toUpperCase());
+        databaseReference.child(key).child("course").setValue(course.toUpperCase());
         databaseReference.child(key).child("sem").setValue(sem);
         databaseReference.child(key).child("priceMRP").setValue(mrp);
         databaseReference.child(key).child("priceNew").setValue(newPrice);
