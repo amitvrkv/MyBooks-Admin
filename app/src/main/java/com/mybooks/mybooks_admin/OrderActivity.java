@@ -253,6 +253,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         }
 
         public void setComment(String comment) {
+            if (comment == null)
+                return;
+            
             TextView mComment = (TextView) view.findViewById(R.id.rvComments);
             mComment.setText(comment.replace("EEEE", "Customer"));
             this.comment = comment;
