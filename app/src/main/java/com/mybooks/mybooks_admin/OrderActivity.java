@@ -32,6 +32,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
     TextView filterInProcess, filterPlaced, filterOutForDel, filterDelivered, filterCancelled;
 
     RecyclerView recyclerView;
+    private LinearLayoutManager mLayoutManager;
 
     FirebaseRecyclerAdapter<OrderModelClass, OrderViewHolder> firebaseRecyclerAdapter;
 
@@ -84,6 +85,11 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             }
         };
 
+        mLayoutManager = new LinearLayoutManager(OrderActivity.this);
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
+
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -161,6 +167,12 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 viewHolder.setComment(model.getComment());
             }
         };
+
+        mLayoutManager = new LinearLayoutManager(OrderActivity.this);
+        mLayoutManager.setReverseLayout(true);
+        mLayoutManager.setStackFromEnd(true);
+
+        recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(firebaseRecyclerAdapter);
 
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
