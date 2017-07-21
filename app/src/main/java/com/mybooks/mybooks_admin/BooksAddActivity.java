@@ -156,7 +156,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            Toast.makeText(this, "dsf", Toast.LENGTH_SHORT).show();
             image_uri = data.getData();
             upload_image.setImageURI(image_uri);
         }
@@ -265,6 +264,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     public void addBookDetailsToDatabase(String title, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
         course = course.replace(".", "");
         course = course.replace(",", "");
+        course = course.toUpperCase();
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
@@ -284,7 +284,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
