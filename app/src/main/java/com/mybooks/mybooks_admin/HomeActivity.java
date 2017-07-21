@@ -32,8 +32,7 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                FirebaseAuth.getInstance().signOut();
-                finish();
+
             }
         });
 
@@ -72,7 +71,9 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.logout_menu) {
+            FirebaseAuth.getInstance().signOut();
+            finish();
             return true;
         }
 
