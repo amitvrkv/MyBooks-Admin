@@ -266,6 +266,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         course = course.replace(",", "");
         course = course.toUpperCase();
 
+
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(course);
