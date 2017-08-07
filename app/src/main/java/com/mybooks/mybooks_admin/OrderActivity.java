@@ -3,6 +3,7 @@ package com.mybooks.mybooks_admin;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -205,6 +206,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             super(itemView);
             this.view = itemView;
 
+            TextView get_order_details = (TextView) itemView.findViewById(R.id.get_order_details);
+            get_order_details.setOnClickListener(this);
+
             TextView cancelOrder = (TextView) itemView.findViewById(R.id.rvCancelOrder);
             cancelOrder.setOnClickListener(this);
 
@@ -276,6 +280,13 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.get_order_details:
+                    Intent intent = new Intent(view.getContext(), OrderDetailsActivity.class);
+                    intent.putExtra("orderId", orderId);
+                    intent.putExtra("orderBy", orderBy);
+                    view.getContext().startActivity(intent);
+                    break;
+
                 case R.id.rvCancelOrder:
                     changeStatus(v.getContext().getString(R.string.order_cancelled));
                     break;
@@ -297,6 +308,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                     break;
 
                 case R.id.rvDeleteOrder:
+
                     DatabaseReference orderDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
                     orderDatabaseReference.removeValue();
 

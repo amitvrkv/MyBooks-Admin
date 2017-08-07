@@ -19,12 +19,29 @@
                 android:orientation="vertical"
                 android:padding="10dp">
 
-                <TextView
-                    android:id="@+id/rvOrderId"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Order ID: "
-                    android:textStyle="bold" />
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/rvOrderId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Order ID: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/get_order_details"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@drawable/round_corner"
+                        android:paddingBottom="3dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="3dp"
+                        android:text="Get details" />
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/rvOrderBy"
@@ -79,7 +96,6 @@
                         android:text="Delivery Address: " />
                 </LinearLayout>
 
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -100,17 +116,16 @@
                             android:layout_height="wrap_content">
 
                             <TextView
-                                android:paddingTop="3dp"
-                                android:paddingBottom="3dp"
-                                android:paddingLeft="5dp"
-                                android:paddingRight="5dp"
-                                android:background="@drawable/round_corner"
-                                android:layout_alignParentRight="true"
                                 android:id="@+id/rvAddCommentstoOrder"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Add comment"
-                                />
+                                android:layout_alignParentRight="true"
+                                android:background="@drawable/round_corner"
+                                android:paddingBottom="3dp"
+                                android:paddingLeft="5dp"
+                                android:paddingRight="5dp"
+                                android:paddingTop="3dp"
+                                android:text="Add comment" />
 
                         </RelativeLayout>
 
@@ -153,11 +168,11 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            android:layout_marginLeft="2dp"
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvCancelOrder"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:layout_marginLeft="2dp"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="Order Cancel" />
 
@@ -168,10 +183,10 @@
                             android:background="@color/colorTextIcon" />
 
                         <TextView
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvOrderPlaced"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="Order placed" />
 
@@ -183,10 +198,10 @@
 
 
                         <TextView
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvInProcess"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="In process" />
 
@@ -196,10 +211,10 @@
                             android:background="@color/colorTextIcon" />
 
                         <TextView
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvOutForDelivery"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="Out for delivery" />
 
@@ -209,10 +224,10 @@
                             android:background="@color/colorTextIcon" />
 
                         <TextView
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvDelivered"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="Delivered" />
 
@@ -222,10 +237,10 @@
                             android:background="@color/colorTextIcon" />
 
                         <TextView
-                            android:background="@drawable/round_corner"
                             android:id="@+id/rvDeleteOrder"
                             android:layout_width="120dp"
                             android:layout_height="match_parent"
+                            android:background="@drawable/round_corner"
                             android:gravity="center"
                             android:text="Delete Order" />
 
