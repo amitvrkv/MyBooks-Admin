@@ -46,23 +46,43 @@
         android:id="@+id/horizontalScrollView"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        >
+        android:layout_alignParentBottom="true">
 
         <LinearLayout
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp">
 
-            <EditText
-                android:layout_width="170dp"
-                android:layout_height="match_parent"
-                android:background="@drawable/round_corner"
-                android:hint="Enter Order ID"
-                android:maxLines="1"
-                android:padding="5dp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_corner">
+
+                <EditText
+                    android:id="@+id/order_id"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/white"
+                    android:hint="Order ID"
+                    android:maxLines="1"
+                    android:padding="5dp" />
+
+                <TextView
+                    android:id="@+id/orderSearch"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorPrimary"
+                    android:gravity="center"
+                    android:paddingRight="2dp"
+                    android:text="SEARCH"
+                    android:textColor="@color/colorTextIcon"
+                    android:textSize="15dp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="2dp"

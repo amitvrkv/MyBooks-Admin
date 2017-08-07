@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -30,7 +31,8 @@ import com.google.firebase.database.ValueEventListener;
 
 public class OrderActivity extends AppCompatActivity implements View.OnClickListener {
 
-    TextView filterInProcess, filterPlaced, filterOutForDel, filterDelivered, filterCancelled;
+    TextView orderSearch, filterInProcess, filterPlaced, filterOutForDel, filterDelivered, filterCancelled;
+    String orderId = null;
 
     RecyclerView recyclerView;
     private LinearLayoutManager mLayoutManager;
@@ -50,6 +52,8 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.setCancelable(false);
         progressDialog.show();
 
+        orderSearch = (TextView) findViewById(R.id.orderSearch);
+        orderSearch.setOnClickListener(this);
         filterInProcess = (TextView) findViewById(R.id.orderFilInProcess);
         filterInProcess.setOnClickListener(this);
         filterPlaced = (TextView) findViewById(R.id.orderFilOrderPlaced);
@@ -119,8 +123,18 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
+        orderId = null;
         switch (v.getId()) {
+            case R.id.orderSearch:
+                EditText order = (EditText) findViewById(R.id.order_id);
+                if(TextUtils.isEmpty(order.getText())) {
+                    Toast.makeText(getApplicationContext(), "Enter order Id", Toast.LENGTH_SHORT).show();
+                } else {
+                    orderId = order.getText().toString();
+                    setFilter("search");
+                }
+                break;
+
             case R.id.orderFilOrderPlaced:
                 setFilter("Order placed");
                 break;
@@ -149,7 +163,13 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         progressDialog.show();
 
         Query databaseReference = null;
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").orderByChild("status").equalTo(status);
+
+        if (orderId == null) {
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").orderByChild("status").equalTo(status);
+        } else {
+            databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").orderByChild("orderid").equalTo(orderId);
+        }
+
         firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<OrderModelClass, OrderViewHolder>(
                 OrderModelClass.class,
                 R.layout.order_view,
