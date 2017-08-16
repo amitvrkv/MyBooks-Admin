@@ -56,6 +56,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
             @Override
             protected void populateViewHolder(OrderDetailsViewHolder viewHolder, OrderDetailsBookList model, int position) {
                 viewHolder.setTitile(model.getTitle());
+                viewHolder.setPublisher(model.getPublisher());
                 viewHolder.setAuthor(model.getAuthor());
                 viewHolder.setQty(model.getQuantity());
                 viewHolder.setCourse(model.getCourse());
@@ -80,6 +81,11 @@ public class OrderDetailsActivity extends AppCompatActivity {
         public void setTitile(String titile) {
             TextView mTitle = (TextView) view.findViewById(R.id.obookTitle);
             mTitle.setText(titile);
+        }
+
+        public void setPublisher(String publisher) {
+            TextView mPublisher = (TextView) view.findViewById(R.id.obookPublisher);
+            mPublisher.setText(publisher);
         }
 
         public void setAuthor(String author) {

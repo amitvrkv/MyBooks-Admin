@@ -3,6 +3,7 @@ package com.mybooks.mybooks_admin;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -50,6 +51,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
     private static final int PICK_IMAGE = 99;
     private EditText mTitle;
+    private EditText mPublisher;
     private EditText mAuthor;
     private EditText mCourse;
     private EditText mSem;
@@ -58,8 +60,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     private EditText mOldPrice;
     private EditText mAvlCopy;
     private TextView mAddBtn;
-
-    private ImageView mBackBtn;
 
     private ImageView upload_image;
 
@@ -79,6 +79,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_books_add);
 
         mTitle = (EditText) findViewById(R.id.addBookTitle);
+        mPublisher = (EditText) findViewById(R.id.addBookPublisher);
         mAuthor = (EditText) findViewById(R.id.addBookAuthor);
         mCourse = (EditText) findViewById(R.id.addBookCourse);
         mSem = (EditText) findViewById(R.id.addBookSem);
@@ -88,9 +89,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         mNewPrice = (EditText) findViewById(R.id.addBookNewPrice);
         mOldPrice = (EditText) findViewById(R.id.addBookOldPrice);
         mAvlCopy = (EditText) findViewById(R.id.addBookAvlCopy);
-
-        mBackBtn = (ImageView) findViewById(R.id.addBookBackBtn);
-        mBackBtn.setOnClickListener(this);
 
         mAddBtn = (TextView) findViewById(R.id.addBookAddBtn);
         mAddBtn.setOnClickListener(this);
@@ -115,10 +113,10 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
                     int mrp = Integer.parseInt(mMRP.getText().toString());
 
-                    newPrice = mrp - (mrp * 15 / 100);
+                    newPrice = mrp - (mrp * 10 / 100);
                     mNewPrice.setText("" + newPrice);
 
-                    oldPrice = mrp - (mrp * 30 / 100);
+                    oldPrice = mrp - (mrp * 25 / 100);
                     mOldPrice.setText("" + oldPrice);
                 }
             }
@@ -131,9 +129,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.addBookBackBtn:
-                finish();
-                break;
 
             case R.id.addBookAddBtn:
                 if (verifyFields()) {
@@ -165,6 +160,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         boolean result = true;
 
         mTitle.setError(null);
+        mPublisher.setError(null);
         mAuthor.setError(null);
         mCourse.setError(null);
         mSem.setError(null);
@@ -175,6 +171,11 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
         if (TextUtils.isEmpty(mTitle.getText().toString())) {
             mTitle.setError("This is required field.");
+            result = false;
+        }
+
+        if (TextUtils.isEmpty(mPublisher.getText().toString())) {
+            mPublisher.setError("This is required field.");
             result = false;
         }
 
@@ -242,7 +243,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 image_source = String.valueOf(downloadUrl);
 
-                addBookDetailsToDatabase(mTitle.getText().toString(), mAuthor.getText().toString(), mCourse.getText().toString(), mSem.getText().toString(), mMRP.getText().toString(), mNewPrice.getText().toString(), mOldPrice.getText().toString(), mAvlCopy.getText().toString());
+                addBookDetailsToDatabase(mTitle.getText().toString(), mPublisher.getText().toString(), mAuthor.getText().toString(), mCourse.getText().toString(), mSem.getText().toString(), mMRP.getText().toString(), mNewPrice.getText().toString(), mOldPrice.getText().toString(), mAvlCopy.getText().toString());
             }
         })
                 .addOnFailureListener(new OnFailureListener() {
@@ -261,7 +262,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void addBookDetailsToDatabase(String title, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
+    public void addBookDetailsToDatabase(String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
         course = course.replace(".", "");
         course = course.replace(",", "");
         course = course.toUpperCase();
@@ -272,6 +273,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(course);
         String key = databaseReference.push().getKey();
         databaseReference.child(key).child("title").setValue(title.toUpperCase());
+        databaseReference.child(key).child("publisher").setValue(publisher.toUpperCase());
         databaseReference.child(key).child("author").setValue(author.toUpperCase());
         databaseReference.child(key).child("course").setValue(course.toUpperCase());
         databaseReference.child(key).child("sem").setValue(sem);
@@ -478,6 +480,22 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         }
 
         return inSampleSize;
+    }
+
+
+    public void setDiscount(String newBookDiscount, String oldBookDiscount) {
+        SharedPreferences sharedPreferences = null;
+        sharedPreferences = getSharedPreferences("discount", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("new", newBookDiscount);
+        editor.putString("old", oldBookDiscount);
+        editor.commit();
+
+        /*if ( sharedPreferences.getString("Name", null) == null) {
+            mDelName.setText("");
+        } else {
+            mDelName.setText(sharedPreferences.getString("Name", null));
+        }*/
     }
 
 }

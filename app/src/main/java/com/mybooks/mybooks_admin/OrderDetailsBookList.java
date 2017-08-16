@@ -5,6 +5,7 @@ package com.mybooks.mybooks_admin;
 
 public class OrderDetailsBookList {
     String author;
+    String publisher;
     String bookkey;
     String booktype;
     String course;
@@ -17,7 +18,7 @@ public class OrderDetailsBookList {
 
     }
 
-    public OrderDetailsBookList(String author, String bookkey, String booktype, String course, String price, String quantity, String sem, String title) {
+    public OrderDetailsBookList(String author, String publisher, String bookkey, String booktype, String course, String price, String quantity, String sem, String title) {
         this.author = author;
         this.bookkey = bookkey;
         this.booktype = booktype;
@@ -26,6 +27,7 @@ public class OrderDetailsBookList {
         this.quantity = quantity;
         this.sem = sem;
         this.title = title;
+        this.publisher = publisher;
     }
 
     public String getAuthor() {
@@ -90,5 +92,13 @@ public class OrderDetailsBookList {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
     }
 }
