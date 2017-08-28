@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
@@ -214,7 +216,6 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-
     public static class OrderViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         View view;
@@ -328,6 +329,11 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                     break;
 
                 case R.id.rvDeleteOrder:
+                    String delete_per = getPermission(v.getContext().getString(R.string.per_deleteOrder));
+                    if(delete_per.equals("0")) {
+                        Toast.makeText(v.getContext(), "Unauthorised access", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     DatabaseReference orderDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
                     orderDatabaseReference.removeValue();
@@ -346,8 +352,14 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
-        public void changeStatus(final String status) {
+        public String getPermission(String column) {
+            SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(view.getContext().getString(R.string.database_path), null);
+            Cursor cursor = sqLiteDatabase.rawQuery("Select * from PERMISSION", null);
+            cursor.moveToFirst();
+            return cursor.getString(cursor.getColumnIndex(column));
+        }
 
+        public void changeStatus(final String status) {
             if (status.equals("comment")) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(view.getContext());
                 final EditText edittext = new EditText(view.getContext());
@@ -432,5 +444,6 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 });
             }
         }
+
     }
 }
