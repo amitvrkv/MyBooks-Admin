@@ -1,6 +1,8 @@
 package com.mybooks.mybooks_admin;
 
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,8 +15,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -26,16 +35,6 @@ public class HomeActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -44,6 +43,18 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // initialising permission
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PERMISSION");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS PERMISSION(addExe VARCHAR, addBook VARCHAR,updateBook VARCHAR, manageOrder VARCHAR, orderInProcess VARCHAR,outForDelivery VARCHAR,delivered VARCHAR,deleteOrder VARCHAR,orderRollBack VARCHAR);");
+        sqLiteDatabase.execSQL("INSERT INTO PERMISSION VALUES('0', '0','0','0','0','0','0', '0', '0');");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        setPermission();
     }
 
     @Override
@@ -88,16 +99,72 @@ public class HomeActivity extends AppCompatActivity
 
         switch (id) {
             case R.id.manageBooksMenu:
-                startActivity(new Intent(this, BooksAddActivity .class));
+                if (getPermission(getString(R.string.per_addBook)).equals("1"))
+                    startActivity(new Intent(this, BooksAddActivity.class));
+                else
+                    Toast.makeText(getApplicationContext(), "Unauthorized access.", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.manageOrdersMenu:
-                startActivity(new Intent(this, OrderActivity.class));
+                if (getPermission(getString(R.string.per_manageOrder)).equals("1"))
+                    startActivity(new Intent(this, OrderActivity.class));
+                else
+                    Toast.makeText(getApplicationContext(), "Unauthorized access.", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.addExeMenu:
+                if (getPermission(getString(R.string.per_addExe)).equals("1"))
+                    startActivity(new Intent(this, AddExecutive.class));
+                else
+                    Toast.makeText(getApplicationContext(), "Unauthorized access.", Toast.LENGTH_SHORT).show();
                 break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void setPermission() {
+        final TextView permission_alert = (TextView) findViewById(R.id.permission_alert);
+        permission_alert.setText("Please wait.  Loading permission...");
+        permission_alert.setVisibility(View.VISIBLE);
+
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        firebaseDatabase.getReference().child("Admin").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", "*")).child("permission").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ModelClassPermission modelClassPermission = dataSnapshot.getValue(ModelClassPermission.class);
+                updateDatabase("addExe", modelClassPermission.getAddExe());
+                updateDatabase("addBook", modelClassPermission.getAddBook());
+                updateDatabase("updateBook", modelClassPermission.getUpdateBook());
+                updateDatabase("manageOrder", modelClassPermission.getManageOrder());
+                updateDatabase("orderInProcess", modelClassPermission.getOrderInProcess());
+                updateDatabase("outForDelivery", modelClassPermission.getOutForDelivery());
+                updateDatabase("delivered", modelClassPermission.getDelivered());
+                updateDatabase("deleteOrder", modelClassPermission.getDeleteOrder());
+                updateDatabase("orderRollBack", modelClassPermission.getOrderRollBack());
+
+                permission_alert.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    public void updateDatabase(String column, String value) {
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        sqLiteDatabase.execSQL("UPDATE PERMISSION SET " + column + "='" + value + "'");
+    }
+
+    public String getPermission(String column) {
+        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        Cursor cursor = sqLiteDatabase.rawQuery("Select * from PERMISSION", null);
+        cursor.moveToFirst();
+        return cursor.getString(cursor.getColumnIndex(column));
     }
 }

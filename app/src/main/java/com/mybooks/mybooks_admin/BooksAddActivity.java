@@ -13,6 +13,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -24,8 +25,11 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +50,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BooksAddActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -70,6 +76,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
     Bitmap updatedBitmap;
 
+    Spinner stage;
+
     String image_source = "na";
     Uri image_uri;
 
@@ -82,7 +90,9 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         mPublisher = (EditText) findViewById(R.id.addBookPublisher);
         mAuthor = (EditText) findViewById(R.id.addBookAuthor);
         mCourse = (EditText) findViewById(R.id.addBookCourse);
+        mCourse.setHint("Course");
         mSem = (EditText) findViewById(R.id.addBookSem);
+        mSem.setHint("Semester");
 
         mMRP = (EditText) findViewById(R.id.addBookMrp);
 
@@ -119,6 +129,34 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                     oldPrice = mrp - (mrp * 25 / 100);
                     mOldPrice.setText("" + oldPrice);
                 }
+            }
+        });
+
+        stage = (Spinner) findViewById(R.id.stage);
+        final List<String> stageList = new ArrayList<String>();
+        stageList.add("UG");
+        stageList.add("PG");
+        stageList.add("12th");
+        stageList.add("School");
+        ArrayAdapter<String> stageDataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, stageList);
+        stageDataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stage.setAdapter(stageDataAdapter);
+        stage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (stageList.get(position).equals("12th")) {
+                    mCourse.setHint("Stream");
+                    mSem.setHint("Year");
+                } else if (stageList.get(position).equals("School")) {
+                    mCourse.setText("School");
+                    mCourse.setEnabled(false);
+                    mSem.setHint("Class");
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 

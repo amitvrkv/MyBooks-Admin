@@ -1,6 +1,7 @@
 package com.mybooks.mybooks_admin;
 
 import android.content.Intent;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,7 +25,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextView mUsername;
     private TextView mPassword;
-    private TextView mKey;
     private TextView mSign_inBtn;
 
     private FirebaseAuth mAuth;
@@ -37,7 +37,6 @@ public class LoginActivity extends AppCompatActivity {
 
         mUsername = (TextView) findViewById(R.id.username_sign_in);
         mPassword = (TextView) findViewById(R.id.password_sign_in);
-        mKey = (TextView) findViewById(R.id.key_sign_in);
         mSign_inBtn = (TextView) findViewById(R.id.signBtn);
 
 
@@ -46,7 +45,6 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mUsername.setError(null);
                 mPassword.setError(null);
-                mKey.setError(null);
 
                 if (TextUtils.isEmpty(mUsername.getText().toString())) {
                     mUsername.setError("This field is required");
@@ -54,11 +52,8 @@ public class LoginActivity extends AppCompatActivity {
                 } else if (TextUtils.isEmpty(mPassword.getText().toString())) {
                     mPassword.setError("This field is required");
                     return;
-                } else if (TextUtils.isEmpty(mKey.getText().toString())) {
-                    mKey.setError("This field is required");
-                    return;
                 }
-                signIn(mUsername.getText().toString(), mPassword.getText().toString(), mKey.getText().toString());
+                signIn(mUsername.getText().toString(), mPassword.getText().toString());
             }
         });
 
@@ -69,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                    verifyDevice(FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 } else {
 
                 }
@@ -92,30 +87,32 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void signIn(String username, String password, final String key) {
+    public void signIn(String username, String password) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    //Toast.makeText(getApplicationContext(), "logged", Toast.LENGTH_SHORT).show();
-                    verifyKey(key);
+                    verifyDevice(mUsername.getText().toString());
                 }
             }
         });
     }
 
-    public void verifyKey(final String key) {
-        final DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
+    public void verifyDevice(String username) {
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("Admin")
-                .child(FirebaseAuth.getInstance().getCurrentUser().getEmail().toString().replace(".", "*"));
+                .child(username.replace(".", "*"));
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String dataBasekey = String.valueOf(dataSnapshot.child("key").getValue());
-                if (key.equals(dataBasekey)) {
+                if (Build.SERIAL.equals(dataBasekey)) {
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                     finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Unauthorized device", Toast.LENGTH_SHORT).show();
+                    FirebaseAuth.getInstance().signOut();
                 }
             }
 

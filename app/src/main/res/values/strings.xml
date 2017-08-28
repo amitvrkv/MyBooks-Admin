@@ -16,4 +16,16 @@
     <string name="out_for_delivery">Out for delivery</string>
     <string name="delivered">Delivered</string>
     <!-- order status -->
+
+    <!-- Perminssion table-->
+    <string name="database_path">/data/data/com.mybooks.mybooks_admin/databases/MYBOOKS</string>
+    <string name="per_addExe">addExe</string>
+    <string name="per_addBook">addBook</string>
+    <string name="per_updateBook">updateBook</string>
+    <string name="per_manageOrder">manageOrder</string>
+    <string name="per_orderInProcess">orderInProcess</string>
+    <string name="per_outForDelivery">outForDelivery</string>
+    <string name="per_delivered">delivered</string>
+    <string name="per_deleteOrder">deleteOrder</string>
+    <string name="per_orderRollBack">orderRollBack</string>
 </resources>

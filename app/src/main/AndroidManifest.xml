@@ -27,7 +27,8 @@
         <activity android:name=".BooksAddActivity" />
         <activity android:name=".BooksUpdateActivity" />
         <activity android:name=".OrderActivity" />
-        <activity android:name=".OrderDetailsActivity"></activity>
+        <activity android:name=".OrderDetailsActivity" />
+        <activity android:name=".AddExecutive"></activity>
     </application>
 
 </manifest>
