@@ -10,20 +10,17 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,7 +34,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -47,8 +43,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +50,12 @@ import java.util.List;
 public class BooksAddActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PICK_IMAGE = 99;
+    DatabaseReference databaseReference;
+    StorageReference mStorageRef;
+    Bitmap updatedBitmap;
+    Spinner stage;
+    String image_source = "na";
+    Uri image_uri;
     private EditText mTitle;
     private EditText mPublisher;
     private EditText mAuthor;
@@ -66,20 +66,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     private EditText mOldPrice;
     private EditText mAvlCopy;
     private TextView mAddBtn;
-
     private ImageView upload_image;
-
-    DatabaseReference databaseReference;
-    StorageReference mStorageRef;
-
     private ProgressDialog progressDialog;
-
-    Bitmap updatedBitmap;
-
-    Spinner stage;
-
-    String image_source = "na";
-    Uri image_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,7 +132,11 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         stage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (stageList.get(position).equals("12th")) {
+                mCourse.setEnabled(true);
+                if (stageList.get(position).equals("UG") || stageList.get(position).equals("PG")) {
+                    mCourse.setHint("Course");
+                    mSem.setHint("Semester or Book Edition");
+                } else if (stageList.get(position).equals("12th")) {
                     mCourse.setHint("Stream");
                     mSem.setHint("Year");
                 } else if (stageList.get(position).equals("School")) {
@@ -300,14 +292,15 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    public void addBookDetailsToDatabase(String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
-        course = course.replace(".", "");
+    public void addBookDetailsToDatabase(final String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
+        /*course = course.replace(".", "");
         course = course.replace(",", "");
         course = course.toUpperCase();
 
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
+        //databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(stage.getSelectedItem().toString()).child(course);
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(course);
         String key = databaseReference.push().getKey();
         databaseReference.child(key).child("title").setValue(title.toUpperCase());
@@ -332,6 +325,58 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 }
                 progressDialog.dismiss();
             }
+        });*/
+        course = course.replace(".", "");
+        course = course.replace(",", "");
+        course = course.toUpperCase();
+
+        final String key = course + "_" + title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
+
+        progressDialog.setTitle("Please wait...");
+        progressDialog.setMessage("adding book details to database...");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
+        databaseReference.child(key).child("f1").setValue("TextBook");
+        databaseReference.child(key).child("f2").setValue(title.toUpperCase());
+        databaseReference.child(key).child("f3").setValue(publisher.toUpperCase());
+        databaseReference.child(key).child("f4").setValue(author.toUpperCase());
+        databaseReference.child(key).child("f5").setValue(course.toUpperCase());
+        databaseReference.child(key).child("f6").setValue(sem);
+        databaseReference.child(key).child("f7").setValue(mrp);
+        databaseReference.child(key).child("f8").setValue(newPrice);
+        databaseReference.child(key).child("f9").setValue(oldPrice);
+        databaseReference.child(key).child("f10").setValue(avlCopy.toString());
+        databaseReference.child(key).child("f11").setValue(key);
+        databaseReference.child(key).child("f12").setValue("0");    //Sold copy
+        databaseReference.child(key).child("f13").setValue(image_source).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
+                    finish();
+                    //addProduactUnderParent(key, title);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
+                }
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    public void addProduactUnderParent(String key, String value) {
+        String cat1 = stage.getSelectedItem().toString();
+        String cat2 = mCourse.getText().toString().toUpperCase().replace(".", "").replace(",", "");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("ProductbyCourse").child("Textbook").child(cat1).child(cat2);
+        databaseReference.child(key).setValue(value).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
+                }
+                progressDialog.dismiss();
+            }
         });
     }
 
@@ -339,31 +384,21 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
         //String filePath = getRealPathFromURI(imageUri);
         String filePath = getPath(imageUri);
-
         Bitmap scaledBitmap = null;
-
         BitmapFactory.Options options = new BitmapFactory.Options();
-
 //      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
 //      you try the use the bitmap here, you will get null.
         options.inJustDecodeBounds = true;
         Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-
         //Bitmap bmp = ((BitmapDrawable) upload_image.getDrawable()).getBitmap();
-
         int actualHeight = options.outHeight;
         int actualWidth = options.outWidth;
-
 //      max Height and width values of the compressed image is taken as 816x612
-
         float maxHeight = 816.0f;
         float maxWidth = 612.0f;
-
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
-
 //      width and height values are set maintaining the aspect ratio of the image
-
         if (actualHeight > maxHeight || actualWidth > maxWidth) {
             if (imgRatio < maxRatio) {
                 imgRatio = maxHeight / actualHeight;
@@ -443,13 +478,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             e.printStackTrace();
         }
 
-        //FileOutputStream out = null;
-        //String filename = getFilename();
-        try {
-            //out = new FileOutputStream(filename);
 
-//          write the compressed bitmap at the destination specified by filename.
-            //scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+        try {
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
@@ -520,7 +550,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         return inSampleSize;
     }
 
-
     public void setDiscount(String newBookDiscount, String oldBookDiscount) {
         SharedPreferences sharedPreferences = null;
         sharedPreferences = getSharedPreferences("discount", MODE_PRIVATE);
@@ -535,5 +564,4 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             mDelName.setText(sharedPreferences.getString("Name", null));
         }*/
     }
-
 }

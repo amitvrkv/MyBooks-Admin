@@ -28,6 +28,8 @@ import com.google.firebase.database.ValueEventListener;
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    SQLiteDatabase sqLiteDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,16 +46,12 @@ public class HomeActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // initialising permission
-        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
-        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PERMISSION");
-        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS PERMISSION(addExe VARCHAR, addBook VARCHAR,updateBook VARCHAR, manageOrder VARCHAR, orderInProcess VARCHAR,outForDelivery VARCHAR,delivered VARCHAR,deleteOrder VARCHAR,orderRollBack VARCHAR);");
-        sqLiteDatabase.execSQL("INSERT INTO PERMISSION VALUES('0', '0','0','0','0','0','0', '0', '0');");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        hideAllNavMenu();
         setPermission();
     }
 
@@ -126,19 +124,44 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void setPermission() {
+        sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PERMISSION");
+        sqLiteDatabase.execSQL("CREATE TABLE IF NOT EXISTS PERMISSION(addExe VARCHAR, addBook VARCHAR,updateBook VARCHAR, manageOrder VARCHAR, orderInProcess VARCHAR,outForDelivery VARCHAR,delivered VARCHAR,deleteOrder VARCHAR,orderRollBack VARCHAR);");
+        sqLiteDatabase.execSQL("INSERT INTO PERMISSION VALUES('0', '0','0','0','0','0','0', '0', '0');");
+
         final TextView permission_alert = (TextView) findViewById(R.id.permission_alert);
         permission_alert.setText("Please wait.  Loading permission...");
         permission_alert.setVisibility(View.VISIBLE);
 
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        firebaseDatabase.getReference().child("Admin").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", "*")).child("permission").addListenerForSingleValueEvent(new ValueEventListener() {
+        firebaseDatabase.getReference().child("Admin").child(FirebaseAuth.getInstance().getCurrentUser().getEmail().replace(".", "*")).child("permission").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ModelClassPermission modelClassPermission = dataSnapshot.getValue(ModelClassPermission.class);
-                updateDatabase("addExe", modelClassPermission.getAddExe());
+
+                /*Menu 1*/
                 updateDatabase("addBook", modelClassPermission.getAddBook());
-                updateDatabase("updateBook", modelClassPermission.getUpdateBook());
+                if (modelClassPermission.getAddBook().equals("1")) {
+                    showNavMenu(R.id.manageBooksMenu);
+                } else {
+                    hideNavMenu(R.id.manageBooksMenu);
+                }
+                /*Menu 2*/
                 updateDatabase("manageOrder", modelClassPermission.getManageOrder());
+                if (modelClassPermission.manageOrder.equals("1")) {
+                    showNavMenu(R.id.manageOrdersMenu);
+                } else {
+                    hideNavMenu(R.id.manageOrdersMenu);
+                }
+                /*Menu 3*/
+                updateDatabase("addExe", modelClassPermission.getAddExe());
+                if (modelClassPermission.addExe.equals("1")) {
+                    showNavMenu(R.id.addExeMenu);
+                } else {
+                    hideNavMenu(R.id.addExeMenu);
+                }
+
+                updateDatabase("updateBook", modelClassPermission.getUpdateBook());
                 updateDatabase("orderInProcess", modelClassPermission.getOrderInProcess());
                 updateDatabase("outForDelivery", modelClassPermission.getOutForDelivery());
                 updateDatabase("delivered", modelClassPermission.getDelivered());
@@ -157,14 +180,34 @@ public class HomeActivity extends AppCompatActivity
     }
 
     public void updateDatabase(String column, String value) {
-        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
         sqLiteDatabase.execSQL("UPDATE PERMISSION SET " + column + "='" + value + "'");
     }
 
     public String getPermission(String column) {
-        SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
+        sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(getString(R.string.database_path), null);
         Cursor cursor = sqLiteDatabase.rawQuery("Select * from PERMISSION", null);
         cursor.moveToFirst();
         return cursor.getString(cursor.getColumnIndex(column));
+    }
+
+    public void hideAllNavMenu() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_menu = navigationView.getMenu();
+        nav_menu.findItem(R.id.manageBooksMenu).setVisible(false);
+        nav_menu.findItem(R.id.manageOrdersMenu).setVisible(false);
+        nav_menu.findItem(R.id.addExeMenu).setVisible(false);
+    }
+
+    public void showNavMenu(int menuID){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_menu = navigationView.getMenu();
+        nav_menu.findItem(menuID).setVisible(true);
+    }
+
+    public void hideNavMenu(int menuID){
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu nav_menu = navigationView.getMenu();
+        nav_menu.findItem(menuID).setVisible(false);
     }
 }

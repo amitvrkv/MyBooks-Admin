@@ -1,5 +1,6 @@
 package com.mybooks.mybooks_admin;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -30,6 +31,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
 
+    private ProgressDialog progressDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,10 @@ public class LoginActivity extends AppCompatActivity {
         mPassword = (TextView) findViewById(R.id.password_sign_in);
         mSign_inBtn = (TextView) findViewById(R.id.signBtn);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Please wait");
+        progressDialog.setCancelable(false);
+        //progressDialog.show();
 
         mSign_inBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (user != null) {
                     verifyDevice(FirebaseAuth.getInstance().getCurrentUser().getEmail());
                 } else {
-
+                    progressDialog.dismiss();
                 }
             }
         };
@@ -87,19 +94,28 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void signIn(String username, String password) {
+    public void signIn(String username, final String password) {
+
+        progressDialog.setMessage("Singing in...");
+        progressDialog.show();
+
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signInWithEmailAndPassword(username, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
+                    progressDialog.dismiss();
                     verifyDevice(mUsername.getText().toString());
                 }
+                progressDialog.dismiss();
             }
         });
     }
 
     public void verifyDevice(String username) {
+        progressDialog.setMessage("Verifying device...");
+        progressDialog.show();
+
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference()
                 .child("Admin")
                 .child(username.replace(".", "*"));
@@ -114,6 +130,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Unauthorized device", Toast.LENGTH_SHORT).show();
                     FirebaseAuth.getInstance().signOut();
                 }
+                progressDialog.dismiss();
             }
 
             @Override

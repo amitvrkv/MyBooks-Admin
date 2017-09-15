@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -45,7 +44,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Book Title"
-                        android:maxLines="1" />
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -58,7 +59,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Book Publisher"
-                        android:maxLines="1" />
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -71,7 +74,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Book Author"
-                        android:maxLines="1" />
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -83,7 +88,9 @@
                         android:id="@+id/addBookCourse"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:maxLines="1" />
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -95,8 +102,9 @@
                         android:id="@+id/addBookSem"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="number"
-                        android:maxLines="1" />
+                        android:imeOptions="actionNext"
+                        android:maxLines="1"
+                        android:singleLine="true" />
 
                 </android.support.design.widget.TextInputLayout>
 
@@ -121,7 +129,9 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Book MRP"
                                 android:inputType="number"
-                                android:maxLines="1" />
+                                android:imeOptions="actionNext"
+                                android:maxLines="1"
+                                android:singleLine="true" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -136,7 +146,9 @@
                                 android:layout_height="wrap_content"
                                 android:hint="New Book Price"
                                 android:inputType="number"
-                                android:maxLines="1" />
+                                android:imeOptions="actionNext"
+                                android:maxLines="1"
+                                android:singleLine="true" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -150,7 +162,9 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Old Book Price"
                                 android:inputType="number"
-                                android:maxLines="1" />
+                                android:imeOptions="actionNext"
+                                android:maxLines="1"
+                                android:singleLine="true" />
 
                         </android.support.design.widget.TextInputLayout>
 
@@ -164,8 +178,9 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Available copy"
                                 android:inputType="number"
+                                android:imeOptions="actionDone"
                                 android:maxLines="1"
-                                 />
+                                android:singleLine="true" />
 
                         </android.support.design.widget.TextInputLayout>
 
