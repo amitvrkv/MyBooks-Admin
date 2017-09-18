@@ -3,9 +3,9 @@ package com.mybooks.mybooks_admin;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
@@ -104,10 +104,11 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-                    progressDialog.dismiss();
                     verifyDevice(mUsername.getText().toString());
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong username or password", Toast.LENGTH_SHORT).show();
+                    progressDialog.dismiss();
                 }
-                progressDialog.dismiss();
             }
         });
     }
@@ -123,14 +124,16 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String dataBasekey = String.valueOf(dataSnapshot.child("key").getValue());
+
                 if (Build.SERIAL.equals(dataBasekey)) {
+                    progressDialog.dismiss();
                     startActivity(new Intent(getApplicationContext(), HomeActivity.class));
                     finish();
                 } else {
                     Toast.makeText(getApplicationContext(), "Unauthorized device", Toast.LENGTH_SHORT).show();
                     FirebaseAuth.getInstance().signOut();
+                    progressDialog.dismiss();
                 }
-                progressDialog.dismiss();
             }
 
             @Override

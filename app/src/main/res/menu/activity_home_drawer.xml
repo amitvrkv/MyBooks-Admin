@@ -12,7 +12,9 @@
             android:title="Manage Orders" />
 
         <item android:id="@+id/addExeMenu"
-            android:title="Add User" />
+            android:title="Add User"
+            android:icon="@android:drawable/ic_menu_add"
+            />
 
     </group>
 

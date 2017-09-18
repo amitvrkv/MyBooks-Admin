@@ -293,39 +293,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     }
 
     public void addBookDetailsToDatabase(final String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
-        /*course = course.replace(".", "");
-        course = course.replace(",", "");
-        course = course.toUpperCase();
-
-
-        progressDialog.setTitle("Please wait...");
-        progressDialog.setMessage("adding book details to database...");
-        //databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(stage.getSelectedItem().toString()).child(course);
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Books").child(course);
-        String key = databaseReference.push().getKey();
-        databaseReference.child(key).child("title").setValue(title.toUpperCase());
-        databaseReference.child(key).child("publisher").setValue(publisher.toUpperCase());
-        databaseReference.child(key).child("author").setValue(author.toUpperCase());
-        databaseReference.child(key).child("course").setValue(course.toUpperCase());
-        databaseReference.child(key).child("sem").setValue(sem);
-        databaseReference.child(key).child("priceMRP").setValue(mrp);
-        databaseReference.child(key).child("priceNew").setValue(newPrice);
-        databaseReference.child(key).child("priceOld").setValue(oldPrice);
-        databaseReference.child(key).child("avlcopy").setValue(Integer.parseInt(avlCopy));
-        databaseReference.child(key).child("key").setValue(key);
-        databaseReference.child(key).child("soldcopy").setValue("0");
-        databaseReference.child(key).child("src").setValue(image_source).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
-                }
-                progressDialog.dismiss();
-            }
-        });*/
         course = course.replace(".", "");
         course = course.replace(",", "");
         course = course.toUpperCase();

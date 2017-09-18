@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">My Books -Admin</string>
-    <string name="title_activity_home">My Books - Admin </string>
+    <string name="title_activity_home">My Books: Admin </string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -17,7 +17,7 @@
     <string name="delivered">Delivered</string>
     <!-- order status -->
 
-    <!-- Perminssion table-->
+    <!-- Permission table-->
     <string name="database_path">/data/data/com.mybooks.mybooks_admin/databases/MYBOOKS</string>
     <string name="per_addExe">addExe</string>
     <string name="per_addBook">addBook</string>
