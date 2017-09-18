@@ -21,11 +21,15 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +60,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     Spinner stage;
     String image_source = "na";
     Uri image_uri;
+
+    private RelativeLayout book_details_form;
     private EditText mTitle;
     private EditText mPublisher;
     private EditText mAuthor;
@@ -69,11 +75,23 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     private ImageView upload_image;
     private ProgressDialog progressDialog;
 
+    /*fetch_price*/
+    EditText fetch_price_mrp;
+    EditText fetch_price_new_price;
+    EditText fetch_price_old_price;
+    TextView fetch_price_new_price_per;
+    TextView fetch_price_old_price_per;
+    SeekBar fetch_price_new_price_seekbar;
+    SeekBar fetch_price_old_price_seekbar;
+    Button fetch_price;
+    RelativeLayout fetch_price_layout;
+    /**/
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_books_add);
 
+        book_details_form = (RelativeLayout) findViewById(R.id.book_details_form);
         mTitle = (EditText) findViewById(R.id.addBookTitle);
         mPublisher = (EditText) findViewById(R.id.addBookPublisher);
         mAuthor = (EditText) findViewById(R.id.addBookAuthor);
@@ -97,6 +115,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         mMRP.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                fetch_price_layout.setVisibility(View.VISIBLE);
+                book_details_form.setVisibility(View.GONE);
             }
 
             @Override
@@ -105,6 +125,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
             @Override
             public void afterTextChanged(Editable s) {
+                /*
                 if (!TextUtils.isEmpty(mMRP.getText().toString())) {
                     int oldPrice = 0;
                     int newPrice = 0;
@@ -116,7 +137,15 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
                     oldPrice = mrp - (mrp * 25 / 100);
                     mOldPrice.setText("" + oldPrice);
-                }
+                }*/
+            }
+        });
+        mMRP.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                fetch_price_layout.setVisibility(View.VISIBLE);
+                book_details_form.setVisibility(View.GONE);
+                return true;
             }
         });
 
@@ -154,6 +183,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
         progressDialog = new ProgressDialog(this);
 
+        fetchPrice();
     }
 
     @Override
@@ -531,4 +561,144 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             mDelName.setText(sharedPreferences.getString("Name", null));
         }*/
     }
+
+    public void fetchPrice() {
+        fetch_price_layout = (RelativeLayout) findViewById(R.id.fetch_price_layout);
+        fetch_price_mrp = (EditText) findViewById(R.id.fetch_price_mrp);
+        fetch_price_new_price = (EditText) findViewById(R.id.fetch_price_new_price);
+        fetch_price_old_price = (EditText) findViewById(R.id.fetch_price_old_price);
+        fetch_price_new_price_per = (TextView) findViewById(R.id.fetch_price_new_price_per);
+        fetch_price_old_price_per = (TextView) findViewById(R.id.fetch_price_old_price_per);
+        fetch_price_new_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_new_price_seekbar);
+        fetch_price_old_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_old_price_seekbar);
+        fetch_price = (Button) findViewById(R.id.fetch_price);
+
+        fetch_price_mrp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                fetch_price_new_price.setText(fetch_price_mrp.getText().toString());
+                fetch_price_old_price.setText(fetch_price_mrp.getText().toString());
+                fetch_price_new_price_seekbar.setProgress(100);
+                fetch_price_old_price_seekbar.setProgress(100);
+            }
+        });
+
+        /*
+        fetch_price_new_price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int per = Integer.parseInt(fetch_price_new_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
+                fetch_price_new_price_seekbar.setProgress(per);
+                fetch_price_new_price_per.setText("" + per + "% of MRP");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        fetch_price_old_price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int per = Integer.parseInt(fetch_price_old_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
+                fetch_price_old_price_seekbar.setProgress(per);
+                fetch_price_old_price_per.setText("" + per + "% of MRP");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        */
+        fetch_price_new_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
+                    return;
+                }
+
+                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
+                fetch_price_new_price_per.setText("" + progress + "% of MRP");
+                fetch_price_new_price.setText(" " + price);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
+                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
+                    fetch_price_new_price_seekbar.setProgress(100);
+                }
+            }
+        });
+
+        fetch_price_old_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
+                    return;
+                }
+
+                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
+                fetch_price_old_price_per.setText("" + progress + "% of MRP");
+                fetch_price_old_price.setText(" " + price);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
+                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
+                    fetch_price_old_price_seekbar.setProgress(100);
+                }
+            }
+        });
+
+        fetch_price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText()) || TextUtils.isEmpty(fetch_price_new_price.getText()) || TextUtils.isEmpty(fetch_price_old_price.getText())){
+                    Toast.makeText(getApplicationContext(), "Please enter MRP / New price or Old price", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mMRP.setText(fetch_price_mrp.getText().toString());
+                mNewPrice.setText(fetch_price_new_price.getText().toString());
+                mOldPrice.setText(fetch_price_old_price.getText().toString());
+
+                fetch_price_layout.setVisibility(View.GONE);
+                book_details_form.setVisibility(View.VISIBLE);
+            }
+        });
+    }
 }
+
