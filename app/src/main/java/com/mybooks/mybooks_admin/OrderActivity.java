@@ -84,9 +84,12 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 viewHolder.setOrderId(model.getOrderid());
                 viewHolder.setOrderBy(model.getFrom());
                 viewHolder.setDate(model.getDate());
-                viewHolder.setDiscount(model.getDiscount());
-                viewHolder.setTotalAmt(model.getGrandtotal());
                 viewHolder.setStatus(model.getStatus());
+                viewHolder.setTotal(model.getTotal());
+                viewHolder.setDelivery(model.getDeliverycharge());
+                viewHolder.setDiscount(model.getDiscount());
+                viewHolder.setGrandTotal(model.getGrandtotal());
+                viewHolder.setPaymentMode(model.getPaymentmode());
                 viewHolder.setDeliveryAdd(model.getDeliveryaddress());
                 viewHolder.setComment(model.getComment());
             }
@@ -183,9 +186,12 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 viewHolder.setOrderId(model.getOrderid());
                 viewHolder.setOrderBy(model.getFrom());
                 viewHolder.setDate(model.getDate());
-                viewHolder.setDiscount(model.getDiscount());
-                viewHolder.setTotalAmt(model.getGrandtotal());
                 viewHolder.setStatus(model.getStatus());
+                viewHolder.setTotal(model.getTotal());
+                viewHolder.setDelivery(model.getDeliverycharge());
+                viewHolder.setDiscount(model.getDiscount());
+                viewHolder.setGrandTotal(model.getGrandtotal());
+                viewHolder.setPaymentMode(model.getPaymentmode());
                 viewHolder.setDeliveryAdd(model.getDeliveryaddress());
                 viewHolder.setComment(model.getComment());
             }
@@ -269,19 +275,34 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             mDate.setText("Date & Time: " + date);
         }
 
+        public void setTotal(String total) {
+            TextView mTotalAmt = (TextView) view.findViewById(R.id.rvTotal);
+            mTotalAmt.setText("Total: " + total);
+        }
+
+        public void setDelivery(String delivery) {
+            TextView mDel = (TextView) view.findViewById(R.id.rvDelivery);
+            mDel.setText("Delivery Charge: " + delivery);
+        }
+
         public void setDiscount(String discount) {
             TextView mDiscount = (TextView) view.findViewById(R.id.rvDiscount);
             mDiscount.setText("Discount: " + discount);
         }
 
-        public void setTotalAmt(String TotalAmt) {
-            TextView mTotalAmt = (TextView) view.findViewById(R.id.rvAmt);
-            mTotalAmt.setText("Total Amount: " + TotalAmt);
+        public void setGrandTotal(String grandTotal) {
+            TextView mGrandTotal = (TextView) view.findViewById(R.id.rvGrandTotal);
+            mGrandTotal.setText("Grand Amount: " + grandTotal);
         }
 
         public void setStatus(String Status) {
             TextView mStatus = (TextView) view.findViewById(R.id.rvStatus);
             mStatus.setText("Status: " + Status);
+        }
+
+        public void setPaymentMode(String pMode) {
+            TextView mPm = (TextView) view.findViewById(R.id.rvPaymentMode);
+            mPm.setText("Payment Mode: " + pMode);
         }
 
         public void setDeliveryAdd(String DeliveryAdd) {
@@ -431,7 +452,6 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             } else {
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference().child("Order").child(orderId);
-                //databaseReference.child("comment").setValue(comment + "My Books: " + status + "\n");
                 databaseReference.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

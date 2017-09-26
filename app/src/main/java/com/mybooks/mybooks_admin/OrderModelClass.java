@@ -13,12 +13,15 @@ public class OrderModelClass {
     String grandtotal;
     String orderid;
     String status;
+    String deliverycharge;
+    String paymentmode;
+    String total;
 
     public OrderModelClass() {
 
     }
 
-    public OrderModelClass(String comment, String date, String deliveryaddress, String discount, String from, String grandtotal, String orderid, String status) {
+    public OrderModelClass(String comment, String date, String deliveryaddress, String discount, String from, String grandtotal, String orderid, String status, String deliverycharge, String paymentmode, String total) {
         this.comment = comment;
         this.date = date;
         this.deliveryaddress = deliveryaddress;
@@ -27,6 +30,9 @@ public class OrderModelClass {
         this.grandtotal = grandtotal;
         this.orderid = orderid;
         this.status = status;
+        this.deliverycharge = deliverycharge;
+        this.paymentmode = paymentmode;
+        this.total = total;
     }
 
     public String getComment() {
@@ -91,5 +97,29 @@ public class OrderModelClass {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDeliverycharge() {
+        return deliverycharge;
+    }
+
+    public void setDeliverycharge(String deliverycharge) {
+        this.deliverycharge = deliverycharge;
+    }
+
+    public String getPaymentmode() {
+        return paymentmode;
+    }
+
+    public void setPaymentmode(String paymentmode) {
+        this.paymentmode = paymentmode;
+    }
+
+    public String getTotal() {
+        return total;
+    }
+
+    public void setTotal(String total) {
+        this.total = total;
     }
 }

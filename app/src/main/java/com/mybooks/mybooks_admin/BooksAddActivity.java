@@ -288,10 +288,12 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         Bitmap bitmap = compressImage(image_uri);
         upload_image.setImageBitmap(bitmap);
 
+        String key = mTitle.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mAuthor.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mMRP.getText().toString().trim();
         mStorageRef = FirebaseStorage.getInstance().getReference()
-                .child("Books")
-                .child(mCourse.getText().toString().toUpperCase())
-                .child("sem_" + mSem.getText().toString()).child(mTitle.getText().toString().toUpperCase() + "_" + mAuthor.getText().toString().toUpperCase());
+                .child("Textbooks")
+                .child(key);
+                //.child(mCourse.getText().toString().toUpperCase())
+                //.child("sem_" + mSem.getText().toString()).child(mTitle.getText().toString().toUpperCase() + "_" + mAuthor.getText().toString().toUpperCase());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -317,6 +319,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                         @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        progressDialog.setMessage("uploading image...\n" + progress + " completed");
                     }
                 });
 
@@ -327,21 +330,21 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         course = course.replace(",", "");
         course = course.toUpperCase();
 
-        final String key = course + "_" + title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
+        final String key = title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
         databaseReference.child(key).child("f1").setValue("TextBook");
-        databaseReference.child(key).child("f2").setValue(title.toUpperCase());
-        databaseReference.child(key).child("f3").setValue(publisher.toUpperCase());
-        databaseReference.child(key).child("f4").setValue(author.toUpperCase());
-        databaseReference.child(key).child("f5").setValue(course.toUpperCase());
-        databaseReference.child(key).child("f6").setValue(sem);
-        databaseReference.child(key).child("f7").setValue(mrp);
-        databaseReference.child(key).child("f8").setValue(newPrice);
-        databaseReference.child(key).child("f9").setValue(oldPrice);
-        databaseReference.child(key).child("f10").setValue(avlCopy.toString());
+        databaseReference.child(key).child("f2").setValue(title.toUpperCase().trim());
+        databaseReference.child(key).child("f3").setValue(publisher.toUpperCase().trim());
+        databaseReference.child(key).child("f4").setValue(author.toUpperCase().trim());
+        databaseReference.child(key).child("f5").setValue(course.toUpperCase().trim());
+        databaseReference.child(key).child("f6").setValue(sem.trim());
+        databaseReference.child(key).child("f7").setValue(mrp.trim());
+        databaseReference.child(key).child("f8").setValue(newPrice.trim());
+        databaseReference.child(key).child("f9").setValue(oldPrice.trim());
+        databaseReference.child(key).child("f10").setValue(avlCopy.toString().trim());
         databaseReference.child(key).child("f11").setValue(key);
         databaseReference.child(key).child("f12").setValue("0");    //Sold copy
         databaseReference.child(key).child("f13").setValue(image_source).addOnCompleteListener(new OnCompleteListener<Void>() {

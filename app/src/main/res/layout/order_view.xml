@@ -58,6 +58,27 @@
                     android:text="Date and Time: " />
 
                 <TextView
+                    android:id="@+id/rvStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Status: " />
+
+                <TextView
+                    android:id="@+id/rvTotal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Total: " />
+
+                <TextView
+                    android:id="@+id/rvDelivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="Delivery Charge: " />
+
+                <TextView
                     android:id="@+id/rvDiscount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,18 +86,19 @@
                     android:text="Discount: " />
 
                 <TextView
-                    android:id="@+id/rvAmt"
+                    android:textColor="@color/Red"
+                    android:id="@+id/rvGrandTotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Total amount: " />
+                    android:text="Grand total: " />
 
                 <TextView
-                    android:id="@+id/rvStatus"
+                    android:id="@+id/rvPaymentMode"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="3dp"
-                    android:text="Status: " />
+                    android:text="Payment Mode: " />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
