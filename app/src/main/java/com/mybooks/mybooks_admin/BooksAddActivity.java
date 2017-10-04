@@ -13,14 +13,12 @@ import android.graphics.Paint;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -46,7 +44,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +57,16 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     Spinner stage;
     String image_source = "na";
     Uri image_uri;
-
+    /*fetch_price*/
+    EditText fetch_price_mrp;
+    EditText fetch_price_new_price;
+    EditText fetch_price_old_price;
+    TextView fetch_price_new_price_per;
+    TextView fetch_price_old_price_per;
+    SeekBar fetch_price_new_price_seekbar;
+    SeekBar fetch_price_old_price_seekbar;
+    Button fetch_price;
+    RelativeLayout fetch_price_layout;
     private RelativeLayout book_details_form;
     private EditText mTitle;
     private EditText mPublisher;
@@ -75,17 +81,24 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
     private ImageView upload_image;
     private ProgressDialog progressDialog;
 
-    /*fetch_price*/
-    EditText fetch_price_mrp;
-    EditText fetch_price_new_price;
-    EditText fetch_price_old_price;
-    TextView fetch_price_new_price_per;
-    TextView fetch_price_old_price_per;
-    SeekBar fetch_price_new_price_seekbar;
-    SeekBar fetch_price_old_price_seekbar;
-    Button fetch_price;
-    RelativeLayout fetch_price_layout;
-    /**/
+    public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        final float totalPixels = width * height;
+        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+            inSampleSize++;
+        }
+        return inSampleSize;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,6 +206,11 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             case R.id.addBookAddBtn:
                 if (verifyFields()) {
                     progressDialog.show();
+                    try {
+                        updatedBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), image_uri);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     upload_image_to_firebase();
                 }
                 break;
@@ -214,6 +232,145 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             image_uri = data.getData();
             upload_image.setImageURI(image_uri);
         }
+    }
+
+    public void fetchPrice() {
+        fetch_price_layout = (RelativeLayout) findViewById(R.id.fetch_price_layout);
+        fetch_price_mrp = (EditText) findViewById(R.id.fetch_price_mrp);
+        fetch_price_new_price = (EditText) findViewById(R.id.fetch_price_new_price);
+        fetch_price_old_price = (EditText) findViewById(R.id.fetch_price_old_price);
+        fetch_price_new_price_per = (TextView) findViewById(R.id.fetch_price_new_price_per);
+        fetch_price_old_price_per = (TextView) findViewById(R.id.fetch_price_old_price_per);
+        fetch_price_new_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_new_price_seekbar);
+        fetch_price_old_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_old_price_seekbar);
+        fetch_price = (Button) findViewById(R.id.fetch_price);
+
+        fetch_price_mrp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                fetch_price_new_price.setText(fetch_price_mrp.getText().toString());
+                fetch_price_old_price.setText(fetch_price_mrp.getText().toString());
+                fetch_price_new_price_seekbar.setProgress(100);
+                fetch_price_old_price_seekbar.setProgress(100);
+            }
+        });
+
+        /*
+        fetch_price_new_price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int per = Integer.parseInt(fetch_price_new_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
+                fetch_price_new_price_seekbar.setProgress(per);
+                fetch_price_new_price_per.setText("" + per + "% of MRP");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        fetch_price_old_price.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int per = Integer.parseInt(fetch_price_old_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
+                fetch_price_old_price_seekbar.setProgress(per);
+                fetch_price_old_price_per.setText("" + per + "% of MRP");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        */
+        fetch_price_new_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())) {
+                    return;
+                }
+
+                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
+                fetch_price_new_price_per.setText("" + progress + "% of MRP");
+                fetch_price_new_price.setText(" " + price);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
+                    fetch_price_new_price_seekbar.setProgress(100);
+                }
+            }
+        });
+
+        fetch_price_old_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())) {
+                    return;
+                }
+
+                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
+                fetch_price_old_price_per.setText("" + progress + "% of MRP");
+                fetch_price_old_price.setText(" " + price);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
+                    fetch_price_old_price_seekbar.setProgress(100);
+                }
+            }
+        });
+
+        fetch_price.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(fetch_price_mrp.getText()) || TextUtils.isEmpty(fetch_price_new_price.getText()) || TextUtils.isEmpty(fetch_price_old_price.getText())) {
+                    Toast.makeText(getApplicationContext(), "Please enter MRP / New price or Old price", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                mMRP.setText(fetch_price_mrp.getText().toString());
+                mNewPrice.setText(fetch_price_new_price.getText().toString());
+                mOldPrice.setText(fetch_price_old_price.getText().toString());
+
+                fetch_price_layout.setVisibility(View.GONE);
+                book_details_form.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     public boolean verifyFields() {
@@ -282,22 +439,29 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+
         progressDialog.setTitle("Please wait");
         progressDialog.setMessage("uploading image...");
 
-        Bitmap bitmap = compressImage(image_uri);
-        upload_image.setImageBitmap(bitmap);
-
         String key = mTitle.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mAuthor.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mMRP.getText().toString().trim();
         mStorageRef = FirebaseStorage.getInstance().getReference()
-                .child("Textbooks")
+                .child("Books")
                 .child(key);
-                //.child(mCourse.getText().toString().toUpperCase())
-                //.child("sem_" + mSem.getText().toString()).child(mTitle.getText().toString().toUpperCase() + "_" + mAuthor.getText().toString().toUpperCase());
+
+        //Bitmap bitmap = compressImage(String.valueOf(image_uri));
+
+        Bitmap bitmap = updatedBitmap;
+
+        upload_image.setImageBitmap(bitmap);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+
         byte[] data = baos.toByteArray();
+
+
         mStorageRef.putBytes(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -305,6 +469,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 @SuppressWarnings("VisibleForTests") Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 image_source = String.valueOf(downloadUrl);
 
+                progressDialog.dismiss();
                 addBookDetailsToDatabase(mTitle.getText().toString(), mPublisher.getText().toString(), mAuthor.getText().toString(), mCourse.getText().toString(), mSem.getText().toString(), mMRP.getText().toString(), mNewPrice.getText().toString(), mOldPrice.getText().toString(), mAvlCopy.getText().toString());
             }
         })
@@ -312,74 +477,19 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
-                        // ...
                     }
                 })
                 .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
                         @SuppressWarnings("VisibleForTests") double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                        progressDialog.setMessage("uploading image...\n" + progress + " completed");
+                        //progressDialog.setMessage("uploading image...\n" + progress + " completed");
                     }
                 });
 
     }
 
-    public void addBookDetailsToDatabase(final String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
-        course = course.replace(".", "");
-        course = course.replace(",", "");
-        course = course.toUpperCase();
-
-        final String key = title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
-
-        progressDialog.setTitle("Please wait...");
-        progressDialog.setMessage("adding book details to database...");
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
-        databaseReference.child(key).child("f1").setValue("TextBook");
-        databaseReference.child(key).child("f2").setValue(title.toUpperCase().trim());
-        databaseReference.child(key).child("f3").setValue(publisher.toUpperCase().trim());
-        databaseReference.child(key).child("f4").setValue(author.toUpperCase().trim());
-        databaseReference.child(key).child("f5").setValue(course.toUpperCase().trim());
-        databaseReference.child(key).child("f6").setValue(sem.trim());
-        databaseReference.child(key).child("f7").setValue(mrp.trim());
-        databaseReference.child(key).child("f8").setValue(newPrice.trim());
-        databaseReference.child(key).child("f9").setValue(oldPrice.trim());
-        databaseReference.child(key).child("f10").setValue(avlCopy.toString().trim());
-        databaseReference.child(key).child("f11").setValue(key);
-        databaseReference.child(key).child("f12").setValue("0");    //Sold copy
-        databaseReference.child(key).child("f13").setValue(image_source).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
-                    finish();
-                    //addProduactUnderParent(key, title);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
-                }
-                progressDialog.dismiss();
-            }
-        });
-    }
-
-    public void addProduactUnderParent(String key, String value) {
-        String cat1 = stage.getSelectedItem().toString();
-        String cat2 = mCourse.getText().toString().toUpperCase().replace(".", "").replace(",", "");
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("ProductbyCourse").child("Textbook").child(cat1).child(cat2);
-        databaseReference.child(key).setValue(value).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
-                }
-                progressDialog.dismiss();
-            }
-        });
-    }
-
+    /*
     public Bitmap compressImage(Uri imageUri) {
 
         //String filePath = getRealPathFromURI(imageUri);
@@ -396,8 +506,10 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 //      max Height and width values of the compressed image is taken as 816x612
         float maxHeight = 816.0f;
         float maxWidth = 612.0f;
+
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
+
 //      width and height values are set maintaining the aspect ratio of the image
         if (actualHeight > maxHeight || actualWidth > maxWidth) {
             if (imgRatio < maxRatio) {
@@ -498,7 +610,8 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
         return updatedBitmap;
     }
-
+    */
+/*
     public String getFilename() {
         File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
         if (!file.exists()) {
@@ -508,6 +621,67 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         return uriSting;
 
     }
+*/
+
+    public void addBookDetailsToDatabase(final String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
+        course = course.replace(".", "");
+        course = course.replace(",", "");
+        course = course.toUpperCase();
+
+        final String key = title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
+
+        progressDialog.setTitle("Please wait...");
+        progressDialog.setMessage("adding book details to database...");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
+        databaseReference.child(key).child("f1").setValue("TextBook");
+        databaseReference.child(key).child("f2").setValue(title.toUpperCase().trim());
+        databaseReference.child(key).child("f3").setValue(publisher.toUpperCase().trim());
+        databaseReference.child(key).child("f4").setValue(author.toUpperCase().trim());
+        databaseReference.child(key).child("f5").setValue(course.toUpperCase().trim());
+        databaseReference.child(key).child("f6").setValue(sem.trim());
+        databaseReference.child(key).child("f7").setValue(mrp.trim());
+        databaseReference.child(key).child("f8").setValue(newPrice.trim());
+        databaseReference.child(key).child("f9").setValue(oldPrice.trim());
+        databaseReference.child(key).child("f10").setValue(avlCopy.toString().trim());
+        databaseReference.child(key).child("f11").setValue(key);
+        databaseReference.child(key).child("f12").setValue("0");    //Sold copy
+        databaseReference.child(key).child("f13").setValue(image_source).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getApplicationContext(), "Book details successfully added to database", Toast.LENGTH_SHORT).show();
+                    finish();
+                    //addProduactUnderParent(key, title);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Failed", Toast.LENGTH_LONG).show();
+                }
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+
+
+/*
+    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
+        }
+        final float totalPixels = width * height;
+        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
+        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
+            inSampleSize++;
+        }
+
+        return inSampleSize;
+    }
+*/
 
     public String getPath(Uri uri) {
         // just some safety built in
@@ -531,24 +705,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         return uri.getPath();
     }
 
-    public int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-        }
-        final float totalPixels = width * height;
-        final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-        while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-            inSampleSize++;
-        }
-
-        return inSampleSize;
-    }
+    /////////////////////////////
 
     public void setDiscount(String newBookDiscount, String oldBookDiscount) {
         SharedPreferences sharedPreferences = null;
@@ -565,143 +722,105 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         }*/
     }
 
-    public void fetchPrice() {
-        fetch_price_layout = (RelativeLayout) findViewById(R.id.fetch_price_layout);
-        fetch_price_mrp = (EditText) findViewById(R.id.fetch_price_mrp);
-        fetch_price_new_price = (EditText) findViewById(R.id.fetch_price_new_price);
-        fetch_price_old_price = (EditText) findViewById(R.id.fetch_price_old_price);
-        fetch_price_new_price_per = (TextView) findViewById(R.id.fetch_price_new_price_per);
-        fetch_price_old_price_per = (TextView) findViewById(R.id.fetch_price_old_price_per);
-        fetch_price_new_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_new_price_seekbar);
-        fetch_price_old_price_seekbar = (SeekBar) findViewById(R.id.fetch_price_old_price_seekbar);
-        fetch_price = (Button) findViewById(R.id.fetch_price);
+    public Bitmap compressImage(String imagePath) {
+        final float maxHeight = 1280.0f;
+        final float maxWidth = 1280.0f;
 
-        fetch_price_mrp.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        Bitmap scaledBitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        Bitmap bmp = BitmapFactory.decodeFile(imagePath, options);
 
+        int actualHeight = options.outHeight;
+        int actualWidth = options.outWidth;
+
+        float imgRatio = (float) actualWidth / (float) actualHeight;
+        float maxRatio = maxWidth / maxHeight;
+
+        if (actualHeight > maxHeight || actualWidth > maxWidth) {
+            if (imgRatio < maxRatio) {
+                imgRatio = maxHeight / actualHeight;
+                actualWidth = (int) (imgRatio * actualWidth);
+                actualHeight = (int) maxHeight;
+            } else if (imgRatio > maxRatio) {
+                imgRatio = maxWidth / actualWidth;
+                actualHeight = (int) (imgRatio * actualHeight);
+                actualWidth = (int) maxWidth;
+            } else {
+                actualHeight = (int) maxHeight;
+                actualWidth = (int) maxWidth;
             }
+        }
+        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
+        options.inJustDecodeBounds = false;
+        options.inDither = false;
+        options.inPurgeable = true;
+        options.inInputShareable = true;
+        options.inTempStorage = new byte[16 * 1024];
+        try {
+            bmp = BitmapFactory.decodeFile(imagePath, options);
+        } catch (OutOfMemoryError exception) {
+            exception.printStackTrace();
+        }
+        try {
+            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.RGB_565);
+        } catch (OutOfMemoryError exception) {
+            exception.printStackTrace();
+        }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+        float ratioX = actualWidth / (float) options.outWidth;
+        float ratioY = actualHeight / (float) options.outHeight;
+        float middleX = actualWidth / 2.0f;
+        float middleY = actualHeight / 2.0f;
+        Matrix scaleMatrix = new Matrix();
+        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
+        Canvas canvas = new Canvas(scaledBitmap);
+        canvas.setMatrix(scaleMatrix);
+        canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
+        if (bmp != null) {
+            bmp.recycle();
+        }
+        ExifInterface exif;
+        try {
+            exif = new ExifInterface(imagePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, 0);
+            Matrix matrix = new Matrix();
+            if (orientation == 6) {
+                matrix.postRotate(90);
+            } else if (orientation == 3) {
+                matrix.postRotate(180);
+            } else if (orientation == 8) {
+                matrix.postRotate(270);
             }
+            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //FileOutputStream out = null;
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                fetch_price_new_price.setText(fetch_price_mrp.getText().toString());
-                fetch_price_old_price.setText(fetch_price_mrp.getText().toString());
-                fetch_price_new_price_seekbar.setProgress(100);
-                fetch_price_old_price_seekbar.setProgress(100);
-            }
-        });
+        //String filepath = MainActivity.imageFilePath;//getFilename();
 
-        /*
-        fetch_price_new_price.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        //try {
+        //new File(imageFilePath).delete();
+        //out = new FileOutputStream(filepath);
 
-            }
+        //write the compressed bitmap at the destination specified by filename.
+        //scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int per = Integer.parseInt(fetch_price_new_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
-                fetch_price_new_price_seekbar.setProgress(per);
-                fetch_price_new_price_per.setText("" + per + "% of MRP");
-            }
+        //} catch (FileNotFoundException e) {
+        //   e.printStackTrace();
+        //}
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-            @Override
-            public void afterTextChanged(Editable s) {
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, byteArrayOutputStream);
 
-            }
-        });
+        byte[] byteArray = byteArrayOutputStream.toByteArray();
 
-        fetch_price_old_price.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        updatedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
 
-            }
+        upload_image.setImageBitmap(updatedBitmap);
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int per = Integer.parseInt(fetch_price_old_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
-                fetch_price_old_price_seekbar.setProgress(per);
-                fetch_price_old_price_per.setText("" + per + "% of MRP");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        */
-        fetch_price_new_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
-                    return;
-                }
-
-                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
-                fetch_price_new_price_per.setText("" + progress + "% of MRP");
-                fetch_price_new_price.setText(" " + price);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
-                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
-                    fetch_price_new_price_seekbar.setProgress(100);
-                }
-            }
-        });
-
-        fetch_price_old_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
-                    return;
-                }
-
-                int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
-                fetch_price_old_price_per.setText("" + progress + "% of MRP");
-                fetch_price_old_price.setText(" " + price);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                if (TextUtils.isEmpty(fetch_price_mrp.getText())){
-                    Toast.makeText(getApplicationContext(), "Please enter MRP", Toast.LENGTH_SHORT).show();
-                    fetch_price_old_price_seekbar.setProgress(100);
-                }
-            }
-        });
-
-        fetch_price.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(fetch_price_mrp.getText()) || TextUtils.isEmpty(fetch_price_new_price.getText()) || TextUtils.isEmpty(fetch_price_old_price.getText())){
-                    Toast.makeText(getApplicationContext(), "Please enter MRP / New price or Old price", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                mMRP.setText(fetch_price_mrp.getText().toString());
-                mNewPrice.setText(fetch_price_new_price.getText().toString());
-                mOldPrice.setText(fetch_price_old_price.getText().toString());
-
-                fetch_price_layout.setVisibility(View.GONE);
-                book_details_form.setVisibility(View.VISIBLE);
-            }
-        });
+        return updatedBitmap;
     }
-}
 
+}
