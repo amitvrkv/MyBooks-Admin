@@ -148,6 +148,10 @@ public class HomeActivity extends AppCompatActivity
                 else
                     Toast.makeText(getApplicationContext(), "Unauthorized access.", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.databaseMenu:
+                startActivity(new Intent(this, Database.class));
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

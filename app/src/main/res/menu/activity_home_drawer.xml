@@ -11,11 +11,14 @@
             android:icon="@drawable/ic_menu_gallery"
             android:title="Manage Orders" />
 
-        <item android:id="@+id/addExeMenu"
-            android:title="Add User"
+        <item
+            android:id="@+id/addExeMenu"
             android:icon="@android:drawable/ic_menu_add"
-            />
+            android:title="Add User" />
 
+        <item
+            android:id="@+id/databaseMenu"
+            android:title="Database" />
     </group>
 
 </menu>
