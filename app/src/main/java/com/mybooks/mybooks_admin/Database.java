@@ -46,7 +46,7 @@ public class Database extends AppCompatActivity {
                     valueList.add(value);
 
 
-                    Toast.makeText(getApplicationContext(), ">> " + key + "\n>> " + value + "\n" + keyList.size() , Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), ">> " + key + "\n>> " + value + "\n" + keyList.size() , Toast.LENGTH_SHORT).show();
                 }
 
                 DatabaseCustomAdapter databaseCustomAdapter = new DatabaseCustomAdapter(keyList, valueList);
