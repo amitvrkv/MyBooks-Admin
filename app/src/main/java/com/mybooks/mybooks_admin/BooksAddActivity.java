@@ -219,7 +219,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 Intent intent = new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                startActivityForResult(Intent.createChooser(intent, "Select product image"), PICK_IMAGE);
                 break;
         }
     }
@@ -312,7 +312,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
-                fetch_price_new_price_per.setText("" + progress + "% of MRP");
+                fetch_price_new_price_per.setText("" + ( 100 - progress ) + "% off on MRP");
                 fetch_price_new_price.setText(" " + price);
             }
 
@@ -338,7 +338,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
                 }
 
                 int price = Integer.parseInt(fetch_price_mrp.getText().toString()) * progress / 100;
-                fetch_price_old_price_per.setText("" + progress + "% of MRP");
+                fetch_price_old_price_per.setText("" + ( 100 - progress ) + "% off on MRP");
                 fetch_price_old_price.setText(" " + price);
             }
 
@@ -443,7 +443,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         progressDialog.setTitle("Please wait");
         progressDialog.setMessage("uploading image...");
 
-        String key = mTitle.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mAuthor.getText().toString().trim().replace(".", "").toUpperCase() + "_" + mMRP.getText().toString().trim();
+        String key = ( mTitle.getText().toString().trim() + "_" + mPublisher.getText().toString().trim() + "_" + mMRP.getText().toString().trim() ).replace(".", "").toUpperCase();
         mStorageRef = FirebaseStorage.getInstance().getReference()
                 .child("Books")
                 .child(key);
@@ -628,12 +628,12 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
         course = course.replace(",", "");
         course = course.toUpperCase();
 
-        final String key = title.replace(".", "") + "_" + author.replace(".", "") + "_" + mrp;
+        final String key = ( title + "_" + publisher + "_" + mrp ).replace(".", "").toUpperCase() ;
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
-        databaseReference.child(key).child("f1").setValue("TextBook");
+        databaseReference.child(key).child("f1").setValue("TEXTBOOK");
         databaseReference.child(key).child("f2").setValue(title.toUpperCase().trim());
         databaseReference.child(key).child("f3").setValue(publisher.toUpperCase().trim());
         databaseReference.child(key).child("f4").setValue(author.toUpperCase().trim());
@@ -659,7 +659,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             }
         });
     }
-
 
 
 /*
