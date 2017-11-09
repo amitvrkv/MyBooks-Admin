@@ -6,10 +6,33 @@
     android:layout_height="match_parent"
     tools:context="com.mybooks.mybooks_admin.Database">
 
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/colorPrimary">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/path"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:gravity="center_vertical"
+                android:text="Root"
+                android:textColor="@color/colorTextIcon" />
+        </ScrollView>
+
+    </RelativeLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/databaseRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/relativeLayout"
         android:clipToPadding="false"
         android:paddingBottom="120dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
