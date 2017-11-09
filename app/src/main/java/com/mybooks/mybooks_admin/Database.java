@@ -41,8 +41,12 @@ public class Database extends AppCompatActivity {
                 new RecyclerItemClickListener(getApplicationContext(), new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        childList.add(keyList.get(position));
-                        setDatabase();
+                        if (valueList.get(position).equals("")) {
+                            childList.add(keyList.get(position));
+                            setDatabase();
+                        } else {
+
+                        }
                     }
                 })
         );
