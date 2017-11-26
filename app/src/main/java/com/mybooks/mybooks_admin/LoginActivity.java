@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView mUsername;
     private TextView mPassword;
     private TextView mSign_inBtn;
+    private TextView serial_no;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -41,6 +42,9 @@ public class LoginActivity extends AppCompatActivity {
         mUsername = (TextView) findViewById(R.id.username_sign_in);
         mPassword = (TextView) findViewById(R.id.password_sign_in);
         mSign_inBtn = (TextView) findViewById(R.id.signBtn);
+
+        serial_no = (TextView) findViewById(R.id.serial_no);
+        serial_no.setText("Serial No: " + Build.SERIAL);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("Please wait");
@@ -124,6 +128,8 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String dataBasekey = String.valueOf(dataSnapshot.child("key").getValue());
+
+                //Toast.makeText(getApplicationContext(), "dataBasekey: "+ dataBasekey + "\nBuild.SERIAL: " + Build.SERIAL, Toast.LENGTH_SHORT).show();
 
                 if (Build.SERIAL.equals(dataBasekey)) {
                     progressDialog.dismiss();

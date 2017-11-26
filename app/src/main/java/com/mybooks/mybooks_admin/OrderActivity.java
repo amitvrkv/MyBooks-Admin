@@ -88,7 +88,9 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 viewHolder.setTotal(model.getTotal());
                 viewHolder.setDelivery(model.getDeliverycharge());
                 viewHolder.setDiscount(model.getDiscount());
-                viewHolder.setGrandTotal(model.getGrandtotal());
+
+                viewHolder.setPayableAmount(model.getPayable_amount());
+
                 viewHolder.setPaymentMode(model.getPaymentmode());
                 viewHolder.setDeliveryAdd(model.getDeliveryaddress());
                 viewHolder.setComment(model.getComment());
@@ -190,7 +192,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
                 viewHolder.setTotal(model.getTotal());
                 viewHolder.setDelivery(model.getDeliverycharge());
                 viewHolder.setDiscount(model.getDiscount());
-                viewHolder.setGrandTotal(model.getGrandtotal());
+                viewHolder.setPayableAmount(model.getPayable_amount());
                 viewHolder.setPaymentMode(model.getPaymentmode());
                 viewHolder.setDeliveryAdd(model.getDeliveryaddress());
                 viewHolder.setComment(model.getComment());
@@ -290,7 +292,7 @@ public class OrderActivity extends AppCompatActivity implements View.OnClickList
             mDiscount.setText("Discount: " + discount);
         }
 
-        public void setGrandTotal(String grandTotal) {
+        public void setPayableAmount(String grandTotal) {
             TextView mGrandTotal = (TextView) view.findViewById(R.id.rvGrandTotal);
             mGrandTotal.setText("Grand Amount: " + grandTotal);
         }

@@ -10,7 +10,7 @@ public class OrderModelClass {
     String deliveryaddress;
     String discount;
     String from;
-    String grandtotal;
+    String payable_amount;
     String orderid;
     String status;
     String deliverycharge;
@@ -21,13 +21,13 @@ public class OrderModelClass {
 
     }
 
-    public OrderModelClass(String comment, String date, String deliveryaddress, String discount, String from, String grandtotal, String orderid, String status, String deliverycharge, String paymentmode, String total) {
+    public OrderModelClass(String comment, String date, String deliveryaddress, String discount, String from, String payable_amount, String orderid, String status, String deliverycharge, String paymentmode, String total) {
         this.comment = comment;
         this.date = date;
         this.deliveryaddress = deliveryaddress;
         this.discount = discount;
         this.from = from;
-        this.grandtotal = grandtotal;
+        this.payable_amount = payable_amount;
         this.orderid = orderid;
         this.status = status;
         this.deliverycharge = deliverycharge;
@@ -75,12 +75,12 @@ public class OrderModelClass {
         this.from = from;
     }
 
-    public String getGrandtotal() {
-        return grandtotal;
+    public String getPayable_amount() {
+        return payable_amount;
     }
 
-    public void setGrandtotal(String grandtotal) {
-        this.grandtotal = grandtotal;
+    public void setPayable_amount(String payable_amount) {
+        this.payable_amount = payable_amount;
     }
 
     public String getOrderid() {
