@@ -265,45 +265,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
             }
         });
 
-        /*
-        fetch_price_new_price.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int per = Integer.parseInt(fetch_price_new_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
-                fetch_price_new_price_seekbar.setProgress(per);
-                fetch_price_new_price_per.setText("" + per + "% of MRP");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-
-        fetch_price_old_price.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int per = Integer.parseInt(fetch_price_old_price.getText().toString()) / Integer.parseInt(fetch_price_mrp.getText().toString()) * 100;
-                fetch_price_old_price_seekbar.setProgress(per);
-                fetch_price_old_price_per.setText("" + per + "% of MRP");
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
-        */
         fetch_price_new_price_seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -489,140 +450,6 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
     }
 
-    /*
-    public Bitmap compressImage(Uri imageUri) {
-
-        //String filePath = getRealPathFromURI(imageUri);
-        String filePath = getPath(imageUri);
-        Bitmap scaledBitmap = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-//      by setting this field as true, the actual bitmap pixels are not loaded in the memory. Just the bounds are loaded. If
-//      you try the use the bitmap here, you will get null.
-        options.inJustDecodeBounds = true;
-        Bitmap bmp = BitmapFactory.decodeFile(filePath, options);
-        //Bitmap bmp = ((BitmapDrawable) upload_image.getDrawable()).getBitmap();
-        int actualHeight = options.outHeight;
-        int actualWidth = options.outWidth;
-//      max Height and width values of the compressed image is taken as 816x612
-        float maxHeight = 816.0f;
-        float maxWidth = 612.0f;
-
-        float imgRatio = actualWidth / actualHeight;
-        float maxRatio = maxWidth / maxHeight;
-
-//      width and height values are set maintaining the aspect ratio of the image
-        if (actualHeight > maxHeight || actualWidth > maxWidth) {
-            if (imgRatio < maxRatio) {
-                imgRatio = maxHeight / actualHeight;
-                actualWidth = (int) (imgRatio * actualWidth);
-                actualHeight = (int) maxHeight;
-            } else if (imgRatio > maxRatio) {
-                imgRatio = maxWidth / actualWidth;
-                actualHeight = (int) (imgRatio * actualHeight);
-                actualWidth = (int) maxWidth;
-            } else {
-                actualHeight = (int) maxHeight;
-                actualWidth = (int) maxWidth;
-
-            }
-        }
-
-//      setting inSampleSize value allows to load a scaled down version of the original image
-
-        options.inSampleSize = calculateInSampleSize(options, actualWidth, actualHeight);
-
-//      inJustDecodeBounds set to false to load the actual bitmap
-        options.inJustDecodeBounds = false;
-
-//      this options allow android to claim the bitmap memory if it runs low on memory
-        options.inPurgeable = true;
-        options.inInputShareable = true;
-        options.inTempStorage = new byte[16 * 1024];
-
-        try {
-//          load the bitmap from its path
-            bmp = BitmapFactory.decodeFile(filePath, options);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-
-        }
-        try {
-            scaledBitmap = Bitmap.createBitmap(actualWidth, actualHeight, Bitmap.Config.ARGB_8888);
-        } catch (OutOfMemoryError exception) {
-            exception.printStackTrace();
-        }
-
-        float ratioX = actualWidth / (float) options.outWidth;
-        float ratioY = actualHeight / (float) options.outHeight;
-        float middleX = actualWidth / 2.0f;
-        float middleY = actualHeight / 2.0f;
-
-        Matrix scaleMatrix = new Matrix();
-        scaleMatrix.setScale(ratioX, ratioY, middleX, middleY);
-
-        Canvas canvas = new Canvas(scaledBitmap);
-        canvas.setMatrix(scaleMatrix);
-        canvas.drawBitmap(bmp, middleX - bmp.getWidth() / 2, middleY - bmp.getHeight() / 2, new Paint(Paint.FILTER_BITMAP_FLAG));
-
-//      check the rotation of the image and display it properly
-        ExifInterface exif;
-        try {
-            exif = new ExifInterface(filePath);
-
-            int orientation = exif.getAttributeInt(
-                    ExifInterface.TAG_ORIENTATION, 0);
-            Log.d("EXIF", "Exif: " + orientation);
-            Matrix matrix = new Matrix();
-            if (orientation == 6) {
-                matrix.postRotate(90);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 3) {
-                matrix.postRotate(180);
-                Log.d("EXIF", "Exif: " + orientation);
-            } else if (orientation == 8) {
-                matrix.postRotate(270);
-                Log.d("EXIF", "Exif: " + orientation);
-            }
-            scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0,
-                    scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix,
-                    true);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
-        try {
-
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 85, byteArrayOutputStream);
-
-            byte[] byteArray = byteArrayOutputStream.toByteArray();
-
-            updatedBitmap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
-
-            upload_image.setImageBitmap(updatedBitmap);
-
-
-        } finally {
-
-        }
-
-        return updatedBitmap;
-    }
-    */
-/*
-    public String getFilename() {
-        File file = new File(Environment.getExternalStorageDirectory().getPath(), "MyFolder/Images");
-        if (!file.exists()) {
-            file.mkdirs();
-        }
-        String uriSting = (file.getAbsolutePath() + "/" + System.currentTimeMillis() + ".jpg");
-        return uriSting;
-
-    }
-*/
-
     public void addBookDetailsToDatabase(final String title, String publisher, String author, String course, String sem, String mrp, String newPrice, String oldPrice, String avlCopy) {
         course = course.replace(".", "");
         course = course.replace(",", "");
@@ -632,7 +459,7 @@ public class BooksAddActivity extends AppCompatActivity implements View.OnClickL
 
         progressDialog.setTitle("Please wait...");
         progressDialog.setMessage("adding book details to database...");
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("Products");
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("PRODUCT").child("PRODUCTS");
         databaseReference.child(key).child("f1").setValue("BOOK");
         databaseReference.child(key).child("f2").setValue(title.toUpperCase().trim());
         databaseReference.child(key).child("f3").setValue(publisher.toUpperCase().trim());
